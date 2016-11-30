@@ -1,0 +1,14 @@
+{
+  "configuration": {
+    "status": "error",
+    "name": "soundclip",
+    "appenders": {
+      "appender": [
+        {"type": "Console", "name": "STDOUT", "PatternLayout": {"pattern": "%d{HH:mm:ss.SSS} [%-5level] %logger{36} - %msg%n"}}
+      ]
+    },
+    "loggers": {
+      "root": {"level":"debug", "AppenderRef": {"ref": "STDOUT"}}
+    }
+  }
+}

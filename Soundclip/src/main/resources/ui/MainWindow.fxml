@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import soundclip.controls.MenuBar?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+         type="javafx.scene.layout.BorderPane" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+         stylesheets="/css/MainWindow.css">
+    <top>
+        <MenuBar/>
+    </top>
+    <center>
+        <TabPane fx:id="cueStackContainer" tabClosingPolicy="UNAVAILABLE" />
+    </center>
+</fx:root>

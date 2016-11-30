@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.control.ToolBar"
+         minHeight="40" maxHeight="40" prefHeight="40" stylesheets="/css/controls/MenuBar.css">
+
+    <!-- Left Items -->
+    <Button id="openProject" />
+    <Button id="newProject"  />
+    <Button id="saveProject" />
+    <Separator orientation="VERTICAL"/>
+    <MenuButton fx:id="addItem"/>
+
+    <Pane><HBox.hgrow>ALWAYS</HBox.hgrow></Pane>
+
+    <!-- Center Items -->
+    <GridPane hgap="10" vgap="2" alignment="CENTER">
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" />
+        </columnConstraints>
+        <Label fx:id="titleLabel" text="Untitled Project" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="subtitleLabel" text="Not Saved" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    </GridPane>
+
+    <Pane><HBox.hgrow>ALWAYS</HBox.hgrow></Pane>
+
+    <!-- Right Items -->
+    <Button id="panic"/>
+    <Separator orientation="VERTICAL"/>
+    <ToggleButton id="lockWorkspace" styleClass="unlocked"/>
+    <MenuButton id="menu">
+        <items>
+            <MenuItem text="Renumber CueList" />
+            <MenuItem text="Rename CueList" />
+            <MenuItem text="Project Properties" />
+            <MenuItem text="About" />
+        </items>
+    </MenuButton>
+</fx:root>
