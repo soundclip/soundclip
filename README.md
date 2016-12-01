@@ -1,4 +1,8 @@
 # soundclip
+[![Build Status](https://travis-ci.org/nlowe/soundclip.svg?branch=master)](https://travis-ci.org/nlowe/soundclip)
+[![Coverage Status](https://coveralls.io/repos/github/nlowe/soundclip/badge.svg?branch=master)](https://coveralls.io/github/nlowe/soundclip?branch=master)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+
 An open source, sound cue management system for theatre.
 Still a very early WIP.
 

@@ -14,47 +14,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
-import java.util.Date;
-
 /**
- * A project is the basic unit of work. Each project contains a collection of cue lists
- * and metadata for the project.
+ *
  */
-public class Project
+public class CueSupportFlags
 {
-    private String projectPath;
-    private String name;
-    private Date lastModified;
+    public static int RESUME = 0b1;
+    public static int FADE   = 0b10;
 
-
-
-    public String getPath()
+    public boolean Supports(ICue cue, int flag)
     {
-        return projectPath;
-    }
-
-    public void setPath(String projectPath)
-    {
-        this.projectPath = projectPath;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public Date getLastModified()
-    {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified)
-    {
-        this.lastModified = lastModified;
+        return (cue.getSupportedOperations() & flag) == flag;
     }
 }
