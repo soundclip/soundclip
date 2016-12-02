@@ -15,41 +15,59 @@
 package soundclip.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
+ * Cue Numbers are comprised of one or more non-negative integers separated by a dot (".").
  *
+ * The most significant part is the leftmost part. Therefore, 1.0.1 < 1.0 and so on.
  */
 public class CueNumber implements Comparable<CueNumber>
 {
     private final ArrayList<Integer> parts;
+    private final String toString;
 
-    private CueNumber()
+    /**
+     * Construct a Cue Number from the specified integers. The 0th integer
+     * is the most significant. The first part must be nonzero.
+     *
+     * @param fromInts the parts of the number
+     */
+    public CueNumber(int...fromInts)
     {
-        parts = new ArrayList<>();
-    }
+        parts = new ArrayList<>(fromInts.length);
 
-    public CueNumber(int...parts)
-    {
-        this();
-
-        for(int i : parts)
+        for(int i : fromInts)
         {
             if(i < 0) throw new IllegalArgumentException("All parts must be positive");
-            this.parts.add(i);
+            parts.add(i);
         }
 
-        if(this.parts.size() == 0) throw new IllegalArgumentException("No number provided");
+        for(int i = parts.size() - 1; i >= 0; i--)
+        {
+            if(parts.get(i) != 0) break;
+
+            parts.remove(i);
+        }
+
+        if(parts.size() == 0) throw new IllegalArgumentException("No number provided");
+        toString = parts.stream().map(Object::toString).collect(Collectors.joining("."));
     }
 
+    /**
+     * Construct a cue number from the specified string. The string should be comprised of
+     * only non-negative integers separated by a dot. The first part must be nonzero.
+     *
+     * @param fromString the string to create the number from
+     */
     public CueNumber(String fromString)
     {
-        this();
-
         if(fromString.trim().isEmpty()) throw new IllegalArgumentException("No number provided");
 
-        for(String s : fromString.split("\\."))
+        String[] stringParts = fromString.split("\\.");
+        parts = new ArrayList<>(stringParts.length);
+
+        for(String s : stringParts)
         {
             int i = Integer.parseInt(s);
 
@@ -57,13 +75,83 @@ public class CueNumber implements Comparable<CueNumber>
             parts.add(i);
         }
 
+        for(int i = this.parts.size() - 1; i >= 0; i--)
+        {
+            if(this.parts.get(i) != 0) break;
+
+            this.parts.remove(i);
+        }
+
         if(parts.size() == 0) throw new IllegalArgumentException("No number provided");
+        toString = parts.stream().map(Object::toString).collect(Collectors.joining("."));
+    }
+
+    /**
+     * Construct a new CueNumber prefixed by that of the specified number
+     *
+     * @param prefix the prefix of the newly constructed cue
+     * @param suffix the suffix to append
+     */
+    public CueNumber(CueNumber prefix, int...suffix)
+    {
+        if(suffix.length == 0) throw new IllegalArgumentException("No suffix provided");
+
+        parts = new ArrayList<>(prefix.parts.size() + suffix.length);
+        parts.addAll(prefix.parts);
+
+        for(int i : suffix)
+        {
+            if(i < 0) throw new IllegalArgumentException("All parts must be positive");
+            parts.add(i);
+        }
+
+        for(int i = parts.size() - 1; i >= 0; i--)
+        {
+            if(parts.get(i) != 0) break;
+
+            parts.remove(i);
+        }
+
+        toString = parts.stream().map(Object::toString).collect(Collectors.joining("."));
+    }
+
+    /**
+     * Construct a new CueNumber prefixed by that of the specified number. The suffix should be comprised of
+     * only non-negative integers separated by a dot.
+     *
+     * @param prefix the prefix of the newly constructed cue
+     * @param suffix the suffix to append
+     */
+    public CueNumber(CueNumber prefix, String suffix)
+    {
+        if(suffix.length() == 0) throw new IllegalArgumentException("No suffix provided");
+
+        String[] stringParts = suffix.split("\\.");
+        parts = new ArrayList<>(prefix.parts.size() + stringParts.length);
+        parts.addAll(prefix.parts);
+
+        for(String s : stringParts)
+        {
+            int i = Integer.parseInt(s);
+
+            if(i < 0) throw new IllegalArgumentException("All parts must be positive");
+            parts.add(i);
+        }
+
+        for(int i = this.parts.size() - 1; i >= 0; i--)
+        {
+            if(this.parts.get(i) != 0) break;
+
+            this.parts.remove(i);
+        }
+
+        toString = parts.stream().map(Object::toString).collect(Collectors.joining("."));
     }
 
     @Override
     public String toString()
     {
-        return parts.stream().map(Object::toString).collect(Collectors.joining("."));
+        return toString;
     }
 
     @Override

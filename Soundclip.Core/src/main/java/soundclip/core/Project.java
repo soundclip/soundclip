@@ -14,47 +14,131 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import soundclip.core.interop.Signal;
+
+import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * A project is the basic unit of work. Each project contains a collection of cue lists
  * and metadata for the project.
  */
-public class Project
+public class Project implements Iterable<CueList>
 {
     private String projectPath;
     private String name;
     private Date lastModified;
 
+    // TODO: Create a way to re-order this. The underlying data structure may need to change
+    private final LinkedList<CueList> cueLists;
 
+    /** A signal triggered when a cue list is added */
+    public final Signal<CueList> onCueListAdded = new Signal<>();
+    /** A signal triggered when a cue list is removed */
+    public final Signal<CueList> onCueListRemoved = new Signal<>();
 
+    /**
+     * Creates a new, empty Project
+     */
+    public Project()
+    {
+        projectPath = null;
+        name = "Untitled Project";
+        lastModified = null;
+        cueLists = new LinkedList<>();
+    }
+
+    /**
+     * Loads the project at the specified path on disk
+     *
+     * @param fromPath the path to load the project from
+     *
+     * @throws IOException if the project could not be loaded successfully
+     */
+    public Project(String fromPath) throws IOException
+    {
+        this();
+
+        // TODO: Load project
+    }
+
+    public CueList appendCueList(String name)
+    {
+        CueList c = new CueList(name);
+
+        cueLists.addLast(c);
+        onCueListAdded.post(c);
+
+        return c;
+    }
+
+    public void removeCueList(String name)
+    {
+        CueList list = cueLists.stream().filter(l -> l.getName().equals(name)).findFirst().orElse(null);
+
+        if(list != null) removeCueList(list);
+    }
+
+    public void removeCueList(CueList list)
+    {
+        boolean removed = cueLists.remove(list);
+
+        if(removed) onCueListRemoved.post(list);
+    }
+
+    /** @return the path to the project on the filesystem */
     public String getPath()
     {
         return projectPath;
     }
 
+    /**
+     * Sets the path to the project on the filesystem
+     *
+     * @throws IllegalStateException If the project was already saved (It already has a path)
+     */
     public void setPath(String projectPath)
     {
+        if (this.projectPath != null) throw new IllegalStateException("The project has already been saved");
+
         this.projectPath = projectPath;
     }
 
+    /** @return the name of the project */
     public String getName()
     {
         return name;
     }
 
+    /** Sets the name of the project */
     public void setName(String name)
     {
         this.name = name;
     }
 
+    /** @return The last date and time the project was modified */
     public Date getLastModified()
     {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified)
+    /**
+     * Saves the project
+     *
+     * @throws IllegalStateException if a project path has not yet been set
+     */
+    public void save()
     {
-        this.lastModified = lastModified;
+        if (projectPath == null) throw new IllegalStateException("The project path has not been specified");
+
+        // TODO: Serialize project
+    }
+
+    @Override
+    public Iterator<CueList> iterator()
+    {
+        return cueLists.iterator();
     }
 }

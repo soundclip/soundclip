@@ -129,6 +129,66 @@ public class CueNumberTests
     }
 
     @Test
+    public void invalidIntSuffixEmpty()
+    {
+        try
+        {
+            new CueNumber(new CueNumber(1,2), new int[]{});
+            fail();
+        }
+        catch (Exception ex)
+        {
+            assertThat(ex, instanceOf(IllegalArgumentException.class));
+            assertThat(ex.getMessage(), is(equalTo("No suffix provided")));
+        }
+    }
+
+    @Test
+    public void invalidStringSuffixEmpty()
+    {
+        try
+        {
+            new CueNumber(new CueNumber(1,2), "");
+            fail();
+        }
+        catch (Exception ex)
+        {
+            assertThat(ex, instanceOf(IllegalArgumentException.class));
+            assertThat(ex.getMessage(), is(equalTo("No suffix provided")));
+        }
+    }
+
+    @Test
+    public void invalidIntNegativeSuffix()
+    {
+        try
+        {
+            new CueNumber(new CueNumber(1,2), -1);
+            fail();
+        }
+        catch (Exception ex)
+        {
+            assertThat(ex, instanceOf(IllegalArgumentException.class));
+            assertThat(ex.getMessage(), is(equalTo("All parts must be positive")));
+        }
+    }
+
+    @Test
+    public void invalidStringNegativeSuffix()
+    {
+        try
+        {
+            new CueNumber(new CueNumber(1,2), "-1");
+            fail();
+        }
+        catch (Exception ex)
+        {
+            assertThat(ex, instanceOf(IllegalArgumentException.class));
+            assertThat(ex.getMessage(), is(equalTo("All parts must be positive")));
+        }
+    }
+
+    @Test
     public void validSinglePartInt()
     {
         CueNumber num = new CueNumber(1);
@@ -154,6 +214,77 @@ public class CueNumberTests
     {
         CueNumber num = new CueNumber("1.2.3");
         assertThat(num.toString(), is(equalTo("1.2.3")));
+    }
+
+    @Test
+    public void validFromIntSuffix()
+    {
+        CueNumber a = new CueNumber(new CueNumber(1,2), 3);
+        CueNumber b = new CueNumber(new CueNumber(1,2), 3, 4);
+
+        assertThat(a.toString(), is(equalTo("1.2.3")));
+        assertThat(b.toString(), is(equalTo("1.2.3.4")));
+    }
+
+    @Test
+    public void validFromStringSuffix()
+    {
+        CueNumber a = new CueNumber(new CueNumber(1,2), "3");
+        CueNumber b = new CueNumber(new CueNumber(1,2), "3.4");
+
+        assertThat(a.toString(), is(equalTo("1.2.3")));
+        assertThat(b.toString(), is(equalTo("1.2.3.4")));
+    }
+
+    @Test
+    public void dropsExtraZeros()
+    {
+        CueNumber a = new CueNumber("1.0");
+        assertThat(a, is(equalTo(new CueNumber(1))));
+
+        CueNumber b = new CueNumber("1.0.1");
+        assertThat(b, is(equalTo(new CueNumber(1,0,1))));
+
+        CueNumber c = new CueNumber("1.0.0");
+        assertThat(c, is(equalTo(new CueNumber(1))));
+    }
+
+    @Test
+    public void intSuffixDropsExtraZeros()
+    {
+        CueNumber a = new CueNumber(new CueNumber(1), 1, 0);
+        assertThat(a, is(equalTo(new CueNumber(1,1))));
+
+        CueNumber b = new CueNumber(new CueNumber(1), 1, 0, 1);
+        assertThat(b, is(equalTo(new CueNumber(1,1,0,1))));
+
+        CueNumber c = new CueNumber(new CueNumber(1), 1, 0, 0);
+        assertThat(c, is(equalTo(new CueNumber(1,1))));
+
+        CueNumber d = new CueNumber(new CueNumber(1), 0);
+        assertThat(d, is(equalTo(new CueNumber(1))));
+
+        CueNumber e = new CueNumber(new CueNumber(1), 0, 1);
+        assertThat(e, is(equalTo(new CueNumber(1,0,1))));
+    }
+
+    @Test
+    public void stringSuffixDropsExtraZeros()
+    {
+        CueNumber a = new CueNumber(new CueNumber(1), "1.0");
+        assertThat(a, is(equalTo(new CueNumber(1,1))));
+
+        CueNumber b = new CueNumber(new CueNumber(1), "1.0.1");
+        assertThat(b, is(equalTo(new CueNumber(1,1,0,1))));
+
+        CueNumber c = new CueNumber(new CueNumber(1), "1.0.0");
+        assertThat(c, is(equalTo(new CueNumber(1,1))));
+
+        CueNumber d = new CueNumber(new CueNumber(1), "0");
+        assertThat(d, is(equalTo(new CueNumber(1))));
+
+        CueNumber e = new CueNumber(new CueNumber(1), "0.1");
+        assertThat(e, is(equalTo(new CueNumber(1,0,1))));
     }
 
     @Test

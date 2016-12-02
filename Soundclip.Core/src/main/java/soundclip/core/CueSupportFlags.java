@@ -15,14 +15,28 @@
 package soundclip.core;
 
 /**
- *
+ * Various flags to detect what features that different cue implementations support
  */
 public class CueSupportFlags
 {
-    public static int RESUME = 0b1;
-    public static int FADE   = 0b10;
 
-    public boolean Supports(ICue cue, int flag)
+    /** Indicates that the cue implementation supports pausing and resuming */
+    public static final int RESUME   = 0b001;
+    /** Indicates that the cue implementation supports fading in */
+    public static final int FADE_IN  = 0b010;
+    /** Indicates that the cue implementation supports fading out */
+    public static final int FADE_OUT = 0b100;
+    /** Indicates that the cue implementation supports fading in both directions */
+    public static final int FADE   = FADE_IN | FADE_OUT;
+
+    /**
+     * Determines if the specified feature is supported by the implementation of the specified cue
+     *
+     * @param cue The cue to inspect
+     * @param flag The flag to check
+     * @return {@code true} iff the cue implementation indicates that the specified feature is supported
+     */
+    public static boolean Supports(ICue cue, int flag)
     {
         return (cue.getSupportedOperations() & flag) == flag;
     }
