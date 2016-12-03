@@ -17,8 +17,10 @@ package soundclip.core.tests.interop;
 import org.junit.Test;
 import soundclip.core.interop.Signal;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for {@link soundclip.core.interop.Signal}

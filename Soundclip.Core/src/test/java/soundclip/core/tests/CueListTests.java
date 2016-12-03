@@ -14,10 +14,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core.tests;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.junit.Test;
 import org.mockito.Matchers;
 import soundclip.core.CueList;
@@ -27,6 +23,10 @@ import soundclip.core.ICue;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link soundclip.core.CueList}

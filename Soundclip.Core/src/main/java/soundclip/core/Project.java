@@ -124,6 +124,12 @@ public class Project implements Iterable<CueList>
         return lastModified;
     }
 
+    /** @return The number of cue lists in the project */
+    public int getCueListCount() { return cueLists.size(); }
+
+    /** @return The number of cues in all cue lists */
+    public int getCueCount() { return cueLists.stream().mapToInt(CueList::size).sum(); }
+
     /**
      * Saves the project
      *
