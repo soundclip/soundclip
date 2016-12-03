@@ -17,7 +17,7 @@ package soundclip.core;
 /**
  * Various flags to detect what features that different cue implementations support
  */
-public class CueSupportFlags
+public abstract class CueSupportFlags
 {
 
     /** Indicates that the cue implementation supports pausing and resuming */
