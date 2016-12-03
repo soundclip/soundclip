@@ -56,19 +56,19 @@ public class CueList implements Iterable<ICue>
         }
     }
 
-    protected CueList()
+    public CueList()
     {
         cues = new TreeMap<>();
         name = "Untitled Cue List";
     }
 
-    protected CueList(String name)
+    public CueList(String name)
     {
         this();
         this.name = name;
     }
 
-    protected CueList(Set<ICue> cues)
+    public CueList(Set<ICue> cues)
     {
         this();
         for(ICue c : cues)
@@ -77,7 +77,7 @@ public class CueList implements Iterable<ICue>
         }
     }
 
-    protected CueList(String name, Set<ICue> cues)
+    public CueList(String name, Set<ICue> cues)
     {
         this();
         for(ICue c : cues)
@@ -147,6 +147,9 @@ public class CueList implements Iterable<ICue>
     {
         return cues.size();
     }
+
+    /** @return {@code true} iff the list is empty */
+    public boolean isEmpty() { return cues.isEmpty(); }
 
     @Override
     public Iterator<ICue> iterator()
