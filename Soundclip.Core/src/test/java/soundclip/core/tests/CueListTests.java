@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
-import soundclip.core.ICue;
+import soundclip.core.cues.ICue;
 
 import java.util.Arrays;
 import java.util.HashSet;

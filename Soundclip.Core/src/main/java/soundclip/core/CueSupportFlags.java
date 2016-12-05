@@ -14,20 +14,34 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import soundclip.core.cues.ICue;
+
 /**
  * Various flags to detect what features that different cue implementations support
  */
-public abstract class CueSupportFlags
+public final class CueSupportFlags
 {
 
     /** Indicates that the cue implementation supports pausing and resuming */
-    public static final int RESUME   = 0b001;
+    public static final int RESUME        = 0b0000001;
     /** Indicates that the cue implementation supports fading in */
-    public static final int FADE_IN  = 0b010;
+    public static final int FADE_IN       = 0b0000010;
     /** Indicates that the cue implementation supports fading out */
-    public static final int FADE_OUT = 0b100;
+    public static final int FADE_OUT      = 0b0000100;
     /** Indicates that the cue implementation supports fading in both directions */
-    public static final int FADE   = FADE_IN | FADE_OUT;
+    public static final int FADE          = FADE_IN | FADE_OUT;
+    /** Indicates that the cue implementation supports seeking relative to the current playhead position */
+    public static final int SEEK_RELATIVE = 0b0001000;
+    /** Indicates that the cue implementation supports seeking directly to a certain offset */
+    public static final int SEEK_ABSOLUTE = 0b0010000;
+    /** Indicates that the cue implementation supports both relative and absolute seeking */
+    public static final int SEEK          = SEEK_RELATIVE | SEEK_ABSOLUTE;
+    /** Indicates that the cue implementation supports adjusting the pitch */
+    public static final int AUDIO_PITCH   = 0b0100000;
+    /** Indicates that the cue implementation supports adjusting the L/R pan */
+    public static final int AUDIO_PAN     = 0b1000000;
+
+    private CueSupportFlags() { throw new AssertionError("Don't do this"); }
 
     /**
      * Determines if the specified feature is supported by the implementation of the specified cue

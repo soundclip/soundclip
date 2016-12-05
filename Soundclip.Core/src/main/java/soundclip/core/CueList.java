@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import soundclip.core.cues.ICue;
 import soundclip.core.interop.Signal;
 
 import java.util.*;

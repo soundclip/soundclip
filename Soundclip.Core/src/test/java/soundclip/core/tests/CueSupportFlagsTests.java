@@ -16,7 +16,7 @@ package soundclip.core.tests;
 
 import org.junit.Test;
 import soundclip.core.CueSupportFlags;
-import soundclip.core.ICue;
+import soundclip.core.cues.ICue;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

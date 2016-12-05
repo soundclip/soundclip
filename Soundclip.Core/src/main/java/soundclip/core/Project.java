@@ -17,6 +17,7 @@ package soundclip.core;
 import soundclip.core.interop.Signal;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,8 +32,7 @@ public class Project implements Iterable<CueList>
     private String name;
     private Date lastModified;
 
-    // TODO: Create a way to re-order this. The underlying data structure may need to change
-    private final LinkedList<CueList> cueLists;
+    private final ArrayList<CueList> cueLists;
 
     /** A signal triggered when a cue list is added */
     public final Signal<CueList> onCueListAdded = new Signal<>();
@@ -47,7 +47,7 @@ public class Project implements Iterable<CueList>
         projectPath = null;
         name = "Untitled Project";
         lastModified = null;
-        cueLists = new LinkedList<>();
+        cueLists = new ArrayList<>();
     }
 
     /**
@@ -68,7 +68,7 @@ public class Project implements Iterable<CueList>
     {
         CueList c = new CueList(name);
 
-        cueLists.addLast(c);
+        cueLists.add(c);
         onCueListAdded.post(c);
 
         return c;

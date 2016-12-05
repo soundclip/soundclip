@@ -17,7 +17,7 @@ package soundclip.core.tests;
 import org.junit.Test;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
-import soundclip.core.ICue;
+import soundclip.core.cues.ICue;
 import soundclip.core.Project;
 
 import java.io.File;

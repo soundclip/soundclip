@@ -251,6 +251,19 @@ public class CueNumberTests
     }
 
     @Test
+    public void intDropsExtraZeros()
+    {
+        CueNumber a = new CueNumber(1,0);
+        assertThat(a , is(equalTo(new CueNumber(1))));
+
+        CueNumber b = new CueNumber(1,0,1);
+        assertThat(b, is(equalTo(new CueNumber(1,0,1))));
+
+        CueNumber c = new CueNumber(1,0,0);
+        assertThat(c, is(equalTo(new CueNumber(1))));
+    }
+
+    @Test
     public void intSuffixDropsExtraZeros()
     {
         CueNumber a = new CueNumber(new CueNumber(1), 1, 0);
