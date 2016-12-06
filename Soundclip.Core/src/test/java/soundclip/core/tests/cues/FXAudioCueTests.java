@@ -19,6 +19,8 @@ import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
+import soundclip.core.cues.IPannableCue;
+import soundclip.core.cues.IPitchableCue;
 import soundclip.core.cues.impl.FXAudioCue;
 
 import java.time.Duration;
@@ -92,5 +94,53 @@ public class FXAudioCueTests
         cue.setFadeOutDuration(Duration.ofSeconds(1));
 
         assertThat(cue.getFadeOutDuration(), is(equalTo(Duration.ofSeconds(1))));
+    }
+
+    @Test
+    public void remembersPitch()
+    {
+        IPitchableCue cue = new FXAudioCue(new CueNumber(1));
+
+        cue.setPitch(1.234);
+
+        assertThat(cue.getPitch(), is(equalTo(1.234)));
+    }
+
+    @Test
+    public void remembersPan()
+    {
+        IPannableCue cue = new FXAudioCue(new CueNumber(1));
+
+        cue.setPan(0.234);
+
+        assertThat(cue.getPan(), is(equalTo(0.234)));
+    }
+
+    @Test
+    public void clampsPanLow()
+    {
+        IPannableCue cue = new FXAudioCue(new CueNumber(1));
+
+        cue.setPan(-1.5);
+
+        assertThat(cue.getPan(), is(equalTo(-1.0)));
+    }
+
+    @Test
+    public void clampsPanHigh()
+    {
+        IPannableCue cue = new FXAudioCue(new CueNumber(1));
+
+        cue.setPan(1.5);
+
+        assertThat(cue.getPan(), is(equalTo(1.0)));
+    }
+
+    @Test
+    public void durationIsZeroIfNoFileSet()
+    {
+        ICue cue = new FXAudioCue(new CueNumber(1));
+
+        assertThat(cue.getDuration(), is(equalTo(Duration.ZERO)));
     }
 }

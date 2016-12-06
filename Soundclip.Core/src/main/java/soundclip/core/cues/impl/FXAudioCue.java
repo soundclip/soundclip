@@ -22,9 +22,7 @@ import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
-import soundclip.core.cues.ICue;
-import soundclip.core.cues.IFadeableCue;
-import soundclip.core.cues.ISeekableCue;
+import soundclip.core.cues.IAudioCue;
 
 import java.time.Duration;
 import java.util.LinkedList;
@@ -36,13 +34,15 @@ import java.util.List;
  * Supports any audio formats supported by the implementation of
  * {@link javafx.scene.media.MediaPlayer} on your system.
  */
-public class FXAudioCue implements IFadeableCue, ISeekableCue, ICue, AutoCloseable
+public class FXAudioCue implements IAudioCue, AutoCloseable
 {
     private CueNumber number;
     private String name;
     private String notes;
     private Duration fadeInDuration;
     private Duration fadeOutDuration;
+    private double pitch;
+    private double pan;
 
     private String source;
     private Media backendSource;
@@ -257,5 +257,29 @@ public class FXAudioCue implements IFadeableCue, ISeekableCue, ICue, AutoCloseab
     {
         if(backend != null) backend.stop();
         backend = null;
+    }
+
+    @Override
+    public double getPitch()
+    {
+        return pitch;
+    }
+
+    @Override
+    public void setPitch(double pitch)
+    {
+        this.pitch = pitch;
+    }
+
+    @Override
+    public double getPan()
+    {
+        return pan;
+    }
+
+    @Override
+    public void setPan(double pan)
+    {
+        this.pan = pan < -1.0 ? -1.0 : (pan > 1.0 ? 1.0 : pan);
     }
 }
