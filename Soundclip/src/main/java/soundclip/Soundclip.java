@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip;
 
+import javafx.scene.image.Image;
 import soundclip.controllers.MainWindow;
 import soundclip.core.Project;
 import com.github.zafarkhaja.semver.Version;
@@ -30,18 +31,17 @@ import org.apache.logging.log4j.Logger;
 /**
  * The main entry point for the application
  */
-public class Startup extends Application
+public class Soundclip extends Application
 {
-    private static final Logger log = LogManager.getLogger(Startup.class);
+    private static final Logger log = LogManager.getLogger(Soundclip.class);
 
     public static final Version VERSION = Version.valueOf("0.1.0-alpha");
 
-    private static Startup singleton;
+    private static Soundclip singleton;
 
-    private Stage primaryStage;
     private MainWindow primaryController;
 
-    private ObjectProperty<Project> currentProject = new SimpleObjectProperty<>(null);
+    private Project currentProject = new Project();
 
     @FXML
     private TabPane cueStackContainer;
@@ -55,18 +55,39 @@ public class Startup extends Application
     public void start(Stage primaryStage) throws Exception
     {
         singleton = this;
-        this.primaryStage = primaryStage;
 
         log.info("Starting Up " + VERSION.toString());
 
+        // TODO: Load last project
         primaryController = new MainWindow();
 
+        primaryStage.setTitle("soundclip");
+        primaryStage.getIcons().addAll(
+                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_512x512.png")),
+                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_256x256.png")),
+                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_128x128.png")),
+                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_64x64.png")),
+                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_48x48.png")),
+                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_32x32.png"))
+        );
         primaryStage.setScene(new Scene(primaryController, 800, 600));
         primaryStage.show();
     }
 
+    public static Soundclip Instance() { return singleton; }
+
     public MainWindow getController()
     {
         return primaryController;
+    }
+
+    public Project getCurrentProject()
+    {
+        return currentProject;
+    }
+
+    public void setCurrentProject(Project currentProject)
+    {
+        this.currentProject = currentProject;
     }
 }

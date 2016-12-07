@@ -14,12 +14,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip;
 
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.css.Styleable;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Control;
+import javafx.scene.control.TableColumn;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
 /**
- *
+ * Common Utilities
  */
 public class Utils
 {
@@ -36,5 +42,21 @@ public class Utils
         }
 
         return fxmlLoader;
+    }
+
+    public static String durationToString(Duration duration){
+        if(duration == null || duration.lessThanOrEqualTo(Duration.ZERO)){
+            return "00:00.000";
+        }else if(duration.equals(Duration.UNKNOWN)){
+            return "UNKNOWN";
+        }else{
+            double millis = duration.toMillis();
+
+            int minutes = (int)(millis / 60000);
+            millis %= 60000;
+
+            double seconds =(millis / 1000);
+            return String.format("%02d:%06.3f", minutes, seconds);
+        }
     }
 }

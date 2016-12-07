@@ -69,7 +69,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>soundclip.Startup</mainClass>
+                            <mainClass>soundclip.Soundclip</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

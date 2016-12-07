@@ -14,13 +14,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * A project is the basic unit of work. Each project contains a collection of cue lists
@@ -31,8 +31,14 @@ public class Project implements Iterable<CueList>
     private String projectPath;
     private String name;
     private Date lastModified;
+    private boolean dirty;
 
     private final ArrayList<CueList> cueLists;
+
+    /** A signal triggered when the project name is changed */
+    public final Signal<String> onRenamed = new Signal<>();
+    /** A signal triggered when the project path is set for the first time */
+    public final Signal<String> onPathSet = new Signal<>();
 
     /** A signal triggered when a cue list is added */
     public final Signal<CueList> onCueListAdded = new Signal<>();
@@ -48,6 +54,9 @@ public class Project implements Iterable<CueList>
         name = "Untitled Project";
         lastModified = null;
         cueLists = new ArrayList<>();
+
+        CueList defaultCueList = appendCueList("Default Cue List");
+        defaultCueList.add(new NoteCue(new CueNumber(1), "This is the default cue list", "With some default notes"));
     }
 
     /**
@@ -60,6 +69,8 @@ public class Project implements Iterable<CueList>
     public Project(String fromPath) throws IOException
     {
         this();
+
+        cueLists.clear();
 
         // TODO: Load project
     }
@@ -104,6 +115,8 @@ public class Project implements Iterable<CueList>
         if (this.projectPath != null) throw new IllegalStateException("The project has already been saved");
 
         this.projectPath = projectPath;
+
+        onPathSet.post(this.projectPath);
     }
 
     /** @return the name of the project */
@@ -116,6 +129,8 @@ public class Project implements Iterable<CueList>
     public void setName(String name)
     {
         this.name = name;
+
+        onRenamed.post(this.name);
     }
 
     /** @return The last date and time the project was modified */
@@ -146,5 +161,10 @@ public class Project implements Iterable<CueList>
     public Iterator<CueList> iterator()
     {
         return cueLists.iterator();
+    }
+
+    public boolean isDirty()
+    {
+        return dirty;
     }
 }

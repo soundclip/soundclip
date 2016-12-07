@@ -1,0 +1,20 @@
+.centered-cell {
+    -fx-alignment: CENTER;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: rgba(33, 37, 41, 0.25);
+}
+
+.table-view,
+.table-view:selected{
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #3874d7;
+}
+
+.cell-muted-text {
+    -fx-text-fill: #868e96;
+}

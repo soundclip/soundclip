@@ -1,6 +1,6 @@
 package soundclip.core.cues;
 
-import java.time.Duration;
+import javafx.util.Duration;
 
 /**
  * A cue that can seek the playhead to a different location

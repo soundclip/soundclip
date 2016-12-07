@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.control.Tab">
+    <TableView fx:id="tableView" stylesheets="/css/controls/CueListView.css">
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No cues in Cue List" />
+        </placeholder>
+        <columns>
+            <TableColumn fx:id="numberCell" text="#" sortable="false" minWidth="50" maxWidth="50"
+                         styleClass="centered-cell">
+                <cellValueFactory>
+                    <PropertyValueFactory property="number" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="nameCell" text="Cue" sortable="false">
+                <cellValueFactory>
+                    <PropertyValueFactory property="name" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="preWaitCell" text="Pre" sortable="false" styleClass="centered-cell, cell-muted-text" minWidth="80" maxWidth="80">
+                <cellValueFactory>
+                    <PropertyValueFactory property="preWaitProgress" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="actionCell" text="Action" sortable="false" styleClass="centered-cell" minWidth="80" maxWidth="80">
+                <cellValueFactory>
+                    <PropertyValueFactory property="progress" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="postWaitCell" text="Post" sortable="false" styleClass="centered-cell, cell-muted-text" minWidth="80" maxWidth="80">
+                <cellValueFactory>
+                    <PropertyValueFactory property="postWaitProgress" />
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+</fx:root>

@@ -14,10 +14,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core.cues.impl;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.util.Duration;
 import soundclip.core.CueNumber;
 import soundclip.core.cues.ICue;
 
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -34,6 +36,14 @@ public class NoteCue implements ICue
         this.number = number;
         name = "Untitled Notes Cue";
         notes = "";
+    }
+
+    public NoteCue(CueNumber number, String name, String notes)
+    {
+        this(number);
+
+        this.name = name;
+        this.notes = notes;
     }
 
     @Override
@@ -79,6 +89,18 @@ public class NoteCue implements ICue
     }
 
     @Override
+    public javafx.util.Duration getPreWaitDelay() { return Duration.ZERO; }
+
+    @Override
+    public void setPreWaitDelay(javafx.util.Duration delay) {}
+
+    @Override
+    public javafx.util.Duration getPostWaitDelay() { return Duration.ZERO; }
+
+    @Override
+    public void setPostWaitDelay(javafx.util.Duration delay) {}
+
+    @Override
     public int getSupportedOperations()
     {
         return 0;
@@ -101,4 +123,40 @@ public class NoteCue implements ICue
 
     @Override
     public void stop() {}
+
+    @Override
+    public ReadOnlyObjectProperty<Duration> preWaitProgressProperty()
+    {
+        return new SimpleObjectProperty<>(Duration.ZERO);
+    }
+
+    @Override
+    public Duration getPreWaitProgress()
+    {
+        return Duration.ZERO;
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<Duration> progressProperty()
+    {
+        return new SimpleObjectProperty<>(Duration.ZERO);
+    }
+
+    @Override
+    public Duration getProgress()
+    {
+        return Duration.ZERO;
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<Duration> postWaitProgressProperty()
+    {
+        return new SimpleObjectProperty<>(Duration.ZERO);
+    }
+
+    @Override
+    public Duration getPostWaitProgress()
+    {
+        return Duration.ZERO;
+    }
 }

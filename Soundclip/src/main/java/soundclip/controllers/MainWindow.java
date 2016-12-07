@@ -14,11 +14,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controllers;
 
+import javafx.scene.control.Tab;
+import soundclip.Soundclip;
 import soundclip.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import soundclip.controls.CueListView;
+import soundclip.core.CueList;
+import soundclip.core.Project;
 
 /**
  * The main application window
@@ -31,10 +36,48 @@ public class MainWindow extends BorderPane
     public MainWindow()
     {
         FXMLLoader fxmlLoader = Utils.load(this, "ui/MainWindow.fxml");
+
+        Project project = Soundclip.Instance().getCurrentProject();
+
+        project.onCueListAdded.whenTriggered((list) ->
+        {
+            cueStackContainer.getTabs().add(new CueListView(list));
+            syncHeaderVisibility();
+        });
+
+        project.onCueListRemoved.whenTriggered((list) ->
+        {
+           Tab toRemove = cueStackContainer.getTabs().stream().filter((tab) -> ((CueListView)tab).getModel() == list).findFirst().orElse(null);
+
+           if(toRemove != null)
+            {
+                cueStackContainer.getTabs().remove(toRemove);
+                syncHeaderVisibility();
+            }
+        });
+
+        for(CueList list : project)
+        {
+            cueStackContainer.getTabs().add(new CueListView(list));
+        }
+
+        syncHeaderVisibility();
     }
 
     public TabPane getCueStackContainer()
     {
         return cueStackContainer;
+    }
+
+    private void syncHeaderVisibility()
+    {
+        if(cueStackContainer.getTabs().size() > 1)
+        {
+            cueStackContainer.getStyleClass().remove("hide-tabs");
+        }
+        else
+        {
+            cueStackContainer.getStyleClass().add("hide-tabs");
+        }
     }
 }

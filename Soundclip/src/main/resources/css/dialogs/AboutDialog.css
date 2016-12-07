@@ -1,0 +1,8 @@
+.hyperlink {
+    -fx-border-color: transparent;
+    -fx-text-fill: #96c9ff;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: #96c9ff;
+}

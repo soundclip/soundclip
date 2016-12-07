@@ -23,7 +23,7 @@ import soundclip.core.cues.IPannableCue;
 import soundclip.core.cues.IPitchableCue;
 import soundclip.core.cues.impl.FXAudioCue;
 
-import java.time.Duration;
+import javafx.util.Duration;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -81,9 +81,9 @@ public class FXAudioCueTests
     {
         IFadeableCue cue = new FXAudioCue(new CueNumber(1));
 
-        cue.setFadeInDuration(Duration.ofSeconds(1));
+        cue.setFadeInDuration(Duration.seconds(1));
 
-        assertThat(cue.getFadeInDuration(), is(equalTo(Duration.ofSeconds(1))));
+        assertThat(cue.getFadeInDuration(), is(equalTo(Duration.seconds(1))));
     }
 
     @Test
@@ -91,9 +91,9 @@ public class FXAudioCueTests
     {
         IFadeableCue cue = new FXAudioCue(new CueNumber(1));
 
-        cue.setFadeOutDuration(Duration.ofSeconds(1));
+        cue.setFadeOutDuration(Duration.seconds(1));
 
-        assertThat(cue.getFadeOutDuration(), is(equalTo(Duration.ofSeconds(1))));
+        assertThat(cue.getFadeOutDuration(), is(equalTo(Duration.seconds(1))));
     }
 
     @Test

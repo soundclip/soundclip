@@ -1,15 +1,15 @@
 package soundclip.core.cues;
 
+import javafx.util.Duration;
 import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
 
-import java.time.Duration;
 import java.util.List;
 
 /**
  * The basic cue interface
  */
-public interface ICue
+public interface ICue extends  IProgressProvider
 {
     /** @return the number of the cue */
     CueNumber getNumber();
@@ -29,6 +29,12 @@ public interface ICue
     /** @return the duration of the cue */
     Duration getDuration();
 
+    Duration getPreWaitDelay();
+    void setPreWaitDelay(Duration delay);
+
+    Duration getPostWaitDelay();
+    void setPostWaitDelay(Duration delay);
+
     /** @return the features supported by the cue. One or more of {@link CueSupportFlags} */
     int getSupportedOperations();
 
@@ -46,5 +52,4 @@ public interface ICue
 
     /** Stops the cue and resets the playback state */
     void stop();
-
 }

@@ -10,9 +10,9 @@
          minHeight="40" maxHeight="40" prefHeight="40" stylesheets="/css/controls/MenuBar.css">
 
     <!-- Left Items -->
-    <Button id="openProject" />
-    <Button id="newProject"  />
-    <Button id="saveProject" />
+    <Button id="openProject" onAction="#doOpenProject" />
+    <Button id="newProject"  onAction="#doNewProject" />
+    <Button id="saveProject" onAction="#doSaveProject" />
     <Separator orientation="VERTICAL"/>
     <MenuButton fx:id="addItem"/>
 
@@ -30,15 +30,15 @@
     <Pane><HBox.hgrow>ALWAYS</HBox.hgrow></Pane>
 
     <!-- Right Items -->
-    <Button id="panic"/>
+    <Button id="panic" onAction="#doPanic"/>
     <Separator orientation="VERTICAL"/>
-    <ToggleButton id="lockWorkspace" styleClass="unlocked"/>
+    <ToggleButton fx:id="lockWorkspace" onAction="#toggleWorkspaceLock"/>
     <MenuButton id="menu">
         <items>
             <MenuItem text="Renumber CueList" />
             <MenuItem text="Rename CueList" />
             <MenuItem text="Project Properties" />
-            <MenuItem text="About" />
+            <MenuItem text="About" onAction="#onAbout"/>
         </items>
     </MenuButton>
 </fx:root>

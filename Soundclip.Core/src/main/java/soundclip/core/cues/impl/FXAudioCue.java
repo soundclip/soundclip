@@ -17,14 +17,16 @@ package soundclip.core.cues.impl;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
 import soundclip.core.cues.IAudioCue;
 
-import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,6 +51,8 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     private MediaPlayer backend;
 
     private Timeline fadeTimeline;
+    private Duration preWaitDelay;
+    private Duration postWaitDelay;
 
     public FXAudioCue(CueNumber number)
     {
@@ -56,6 +60,8 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
         name = "Untitled Audio Cue";
         fadeInDuration = Duration.ZERO;
         fadeOutDuration = Duration.ZERO;
+        preWaitDelay = Duration.ZERO;
+        postWaitDelay = Duration.ZERO;
     }
 
     @Override
@@ -97,7 +103,31 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     @Override
     public Duration getDuration()
     {
-        return backendSource == null || backend == null ? Duration.ZERO : Duration.ofMillis((long) backend.getTotalDuration().toMillis());
+        return backendSource == null || backend == null ? Duration.ZERO : backend.getTotalDuration();
+    }
+
+    @Override
+    public Duration getPreWaitDelay()
+    {
+        return preWaitDelay;
+    }
+
+    @Override
+    public void setPreWaitDelay(Duration delay)
+    {
+        preWaitDelay = delay;
+    }
+
+    @Override
+    public Duration getPostWaitDelay()
+    {
+        return postWaitDelay;
+    }
+
+    @Override
+    public void setPostWaitDelay(Duration delay)
+    {
+        postWaitDelay = delay;
     }
 
     @Override
@@ -174,6 +204,44 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     }
 
     @Override
+    public ReadOnlyObjectProperty<Duration> preWaitProgressProperty()
+    {
+        // TODO: implement pre-wait
+        return new SimpleObjectProperty<>(Duration.ZERO);
+    }
+
+    @Override
+    public Duration getPreWaitProgress()
+    {
+        return Duration.ZERO;
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<Duration> progressProperty()
+    {
+        return backend == null ? new SimpleObjectProperty<>(Duration.UNKNOWN) : backend.currentTimeProperty();
+    }
+
+    @Override
+    public Duration getProgress()
+    {
+        return backend == null ? Duration.UNKNOWN : backend.getCurrentTime();
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<Duration> postWaitProgressProperty()
+    {
+        //TODO: Implement Post-Wait
+        return new SimpleObjectProperty<>(Duration.ZERO);
+    }
+
+    @Override
+    public Duration getPostWaitProgress()
+    {
+        return Duration.ZERO;
+    }
+
+    @Override
     public void fadeIn()
     {
         if(fadeTimeline != null)
@@ -223,7 +291,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     @Override
     public void seekRelative(Duration offset)
     {
-        backend.seek(backend.getCurrentTime().add(javafx.util.Duration.millis(offset.toDays())));
+        backend.seek(backend.getCurrentTime().add(offset));
     }
 
     @Override
