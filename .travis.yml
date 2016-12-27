@@ -14,4 +14,4 @@ cache:
     - $HOME/.m2
 
 after_success:
-  - mvn -DrepoToken=$COVERALLS_TOKEN jacoco:report coveralls:report
+  - mvn -DrepoToken=$COVERALLS_TOKEN org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report
