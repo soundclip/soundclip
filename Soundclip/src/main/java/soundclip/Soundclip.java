@@ -16,19 +16,21 @@ package soundclip;
 
 import com.github.zafarkhaja.semver.Version;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.controllers.MainWindow;
-import soundclip.controls.NotesPane;
+import soundclip.controls.CueListView;
+import soundclip.core.CueList;
 import soundclip.core.Project;
 import soundclip.osc.OSCServer;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * The main entry point for the application
@@ -45,9 +47,6 @@ public class Soundclip extends Application
 
     private Project currentProject;
     private OSCServer oscServer;
-
-    @FXML private TabPane cueStackContainer;
-    @FXML private NotesPane notesPane;
 
     public static void main(String[] args)
     {
@@ -100,6 +99,26 @@ public class Soundclip extends Application
     public MainWindow getController()
     {
         return primaryController;
+    }
+
+    public Optional<CueListView> getActiveCueListView()
+    {
+        Optional<CueListView> result = Optional.empty();
+
+        SingleSelectionModel<Tab> model = primaryController.getCueStackContainer().getSelectionModel();
+        if(model == null) return result;
+
+        Tab t = model.getSelectedItem();
+        if (t == null) return result;
+
+        return Optional.of((CueListView)t);
+    }
+
+    public Optional<CueList> getActiveCueList()
+    {
+        CueListView view = getActiveCueListView().orElse(null);
+
+        return view == null ? Optional.empty() : Optional.of(view.getModel());
     }
 
     public Project getCurrentProject()

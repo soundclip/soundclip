@@ -14,6 +14,18 @@
     -fx-graphic: url('/img/ic_add_box_white_24dp_1x.png');
 }
 
+.add-audio-cue > .label {
+    -fx-graphic: url('/img/ic_music_note_white_18dp_1x.png');
+}
+
+.add-note-cue > .label {
+    -fx-graphic: url('/img/ic_note_white_18dp_1x.png');
+}
+
+.add-cue-list > .label {
+    -fx-graphic: url('/img/ic_queue_music_white_18dp_1x.png');
+}
+
 #panic {
     -fx-graphic: url('/img/ic_warning_white_24dp_1x.png')
 }

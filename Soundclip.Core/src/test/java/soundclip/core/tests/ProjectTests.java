@@ -62,7 +62,7 @@ public class ProjectTests
 
         CueList c = p.appendCueList("asdf");
 
-        assertThat(p.getCueListCount(), is(equalTo(1)));
+        assertThat(p.getCueListCount(), is(equalTo(2)));
         assertThat(callbackCalledProxy[0], is(true));
         assertThat(c.getName(), is(equalTo("asdf")));
     }
@@ -82,7 +82,7 @@ public class ProjectTests
 
         p.removeCueList("asdf");
 
-        assertThat(p.getCueListCount(), is(equalTo(0)));
+        assertThat(p.getCueListCount(), is(equalTo(1)));
         assertThat(callbackCalledProxy[0], is(true));
     }
 
@@ -101,7 +101,7 @@ public class ProjectTests
 
         p.removeCueList(list);
 
-        assertThat(p.getCueListCount(), is(equalTo(0)));
+        assertThat(p.getCueListCount(), is(equalTo(1)));
         assertThat(callbackCalledProxy[0], is(true));
     }
 
@@ -214,6 +214,7 @@ public class ProjectTests
 
         Iterator<CueList> iter = p.iterator();
 
+        assertThat(iter.next().getName(), is(equalTo("Default Cue List")));
         assertThat(iter.next().getName(), is(equalTo("a")));
         assertThat(iter.next().getName(), is(equalTo("b")));
         assertThat(iter.hasNext(), is(false));

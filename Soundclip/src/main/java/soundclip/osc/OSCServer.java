@@ -36,6 +36,8 @@ public class OSCServer implements AutoCloseable
     private final Project project;
     private final OSCPortIn listener;
 
+    private long lastOSCPanicAt = 0;
+
     public OSCServer(Project project) throws IOException
     {
         this.project = project;
@@ -119,6 +121,10 @@ public class OSCServer implements AutoCloseable
     private void onPanic(OSCTimeStamp time, OSCMessage message)
     {
         Log.debug("Got a PANIC message at {}", time.toDate());
+
+        long now = System.currentTimeMillis();
+        project.panic(now - lastOSCPanicAt <= project.getPanicHardStopBefore());
+        lastOSCPanicAt = now;
     }
 
     @OSCRoute("/focus/previous/cue")

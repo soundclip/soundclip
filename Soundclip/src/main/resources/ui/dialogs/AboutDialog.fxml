@@ -11,8 +11,8 @@
         <Image url="/img/icon/icon_64x64.png"/>
     </ImageView>
     <Label fx:id="versionLabel" />
-    <Hyperlink text="https://github.com/nlowe/soundclip" onAction="#onProjectLinkClicked" />
-    <Label text="Copyright 2015 Nathan Lowe" />
+    <Hyperlink text="https://github.com/soundclip/soundclip" onAction="#onProjectLinkClicked" />
+    <Label text="Copyright 2015 - 2017 Soundclip Developers " />
     <Label text="This program comes with absolutely no warranty" />
     <Hyperlink text="See the GNU General Public License, Version 3 or later for details" onAction="#onLicenseLinkClicked"  />
 

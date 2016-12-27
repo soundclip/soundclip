@@ -14,22 +14,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controls;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.Scene;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.image.ImageView;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.Soundclip;
 import soundclip.Utils;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import soundclip.core.Project;
 import soundclip.dialogs.AboutDialog;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * The top menu bar for the main window
@@ -56,9 +57,27 @@ public class MenuBar extends ToolBar
         subtitleLabel.setText(p.getPath() == null ? "Not Saved" : p.getPath());
         p.onPathSet.whenTriggered((path) -> subtitleLabel.setText(path));
 
+        initAddItems(addItem.getItems());
+    }
+
+    private void initAddItems(ObservableList<MenuItem> i)
+    {
+        MenuItem addAudioCue = new MenuItem("Audio Cue");
+        addAudioCue.setOnAction(this::doAddAudioCue);
+        addAudioCue.getStyleClass().add("add-audio-cue");
+        i.add(addAudioCue);
+
+        MenuItem addNoteCue = new MenuItem("Note Cue");
+        addNoteCue.setOnAction(this::doAddNoteCue);
+        addNoteCue.getStyleClass().add("add-note-cue");
+        i.add(addNoteCue);
+
+        i.add(new SeparatorMenuItem());
+
         MenuItem addCueList = new MenuItem("Cue List");
-        addCueList.setId("soundclip.core.cuelist");
-        addItem.getItems().add(addCueList);
+        addCueList.setOnAction(this::doAddCueList);
+        addCueList.getStyleClass().add("add-cue-list");
+        i.add(addCueList);
     }
 
     @FXML
@@ -100,6 +119,29 @@ public class MenuBar extends ToolBar
         Log.debug("TODO: Show file chooser for new project");
     }
 
+    private void doAddAudioCue(ActionEvent event)
+    {
+        Log.debug("TODO: Add audio cue to current cue list");
+    }
+
+    private void doAddNoteCue(ActionEvent event)
+    {
+        Log.debug("TODO: Add note cue to current cue list");
+    }
+
+    private void doAddCueList(ActionEvent event)
+    {
+        TextInputDialog dialog = new TextInputDialog("New Cue List");
+        dialog.getDialogPane().getStylesheets().add("/css/theme.css");
+        dialog.setGraphic(new ImageView(this.getClass().getResource("/img/ic_queue_music_white_18dp_1x.png").toString()));
+        dialog.setTitle("Add Cue List");
+        dialog.setHeaderText("Append Cue List to Project");
+        dialog.setContentText("Cue List Name:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(name -> Soundclip.Instance().getCurrentProject().appendCueList(name));
+    }
+
     @FXML
     protected void doPanic(ActionEvent event)
     {
@@ -113,6 +155,21 @@ public class MenuBar extends ToolBar
         boolean setLock = lockWorkspace.isSelected();
 
         Log.debug("TODO: Set project lock to {}", setLock);
+    }
+
+    @FXML
+    protected void onRenameCueList(ActionEvent event)
+    {
+        TextInputDialog dialog = new TextInputDialog("New Name");
+        dialog.getDialogPane().getStylesheets().add("/css/theme.css");
+        dialog.setHeaderText(null);
+        dialog.getDialogPane().setHeader(null);
+        dialog.setGraphic(new ImageView(this.getClass().getResource("/img/ic_queue_music_white_48dp_2x.png").toString()));
+        dialog.setTitle("Rename Cue List");
+        dialog.setContentText("Cue List Name:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(name -> Soundclip.Instance().getActiveCueList().ifPresent(c -> c.setName(name)));
     }
 
     @FXML

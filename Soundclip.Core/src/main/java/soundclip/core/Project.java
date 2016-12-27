@@ -37,7 +37,7 @@ public class Project implements Iterable<CueList>
     private Date lastModified;
     private boolean dirty;
 
-    private long panicHardStopBefore;
+    private long panicHardStopBefore = 3 * 1000;
 
     private final ArrayList<CueList> cueLists;
 
@@ -61,8 +61,7 @@ public class Project implements Iterable<CueList>
         lastModified = null;
         cueLists = new ArrayList<>();
 
-//        CueList defaultCueList = appendCueList("Default Cue List");
-//        defaultCueList.add(new NoteCue(new CueNumber(1), "This is the default cue list", "With some default notes"));
+        appendCueList("Default Cue List");
     }
 
     /**

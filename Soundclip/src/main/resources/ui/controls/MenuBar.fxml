@@ -36,7 +36,7 @@
     <MenuButton id="menu">
         <items>
             <MenuItem text="Renumber CueList" />
-            <MenuItem text="Rename CueList" />
+            <MenuItem text="Rename CueList" onAction="#onRenameCueList"/>
             <MenuItem text="Project Properties" />
             <MenuItem text="About" onAction="#onAbout"/>
         </items>
