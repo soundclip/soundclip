@@ -14,19 +14,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip;
 
-import javafx.scene.image.Image;
-import soundclip.controllers.MainWindow;
-import soundclip.core.Project;
 import com.github.zafarkhaja.semver.Version;
 import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import soundclip.controllers.MainWindow;
+import soundclip.controls.NotesPane;
+import soundclip.core.Project;
+import soundclip.osc.OSCServer;
+
+import java.io.IOException;
 
 /**
  * The main entry point for the application
@@ -41,10 +43,11 @@ public class Soundclip extends Application
 
     private MainWindow primaryController;
 
-    private Project currentProject = new Project();
+    private Project currentProject;
+    private OSCServer oscServer;
 
-    @FXML
-    private TabPane cueStackContainer;
+    @FXML private TabPane cueStackContainer;
+    @FXML private NotesPane notesPane;
 
     public static void main(String[] args)
     {
@@ -59,6 +62,8 @@ public class Soundclip extends Application
         log.info("Starting Up " + VERSION.toString());
 
         // TODO: Load last project
+        setCurrentProject(new Project());
+
         primaryController = new MainWindow();
 
         primaryStage.setTitle("soundclip");
@@ -72,6 +77,22 @@ public class Soundclip extends Application
         );
         primaryStage.setScene(new Scene(primaryController, 800, 600));
         primaryStage.show();
+    }
+
+    @Override
+    public void stop()
+    {
+        if(oscServer != null)
+        {
+            try
+            {
+                oscServer.close();
+            }
+            catch (Exception e)
+            {
+                log.fatal("Error shutting down OSC Server", e);
+            }
+        }
     }
 
     public static Soundclip Instance() { return singleton; }
@@ -88,6 +109,28 @@ public class Soundclip extends Application
 
     public void setCurrentProject(Project currentProject)
     {
+        if(oscServer != null)
+        {
+            try
+            {
+                oscServer.close();
+            }
+            catch (Exception e)
+            {
+                log.fatal("Error shutting down OSC Server", e);
+            }
+        }
+
         this.currentProject = currentProject;
+
+        try
+        {
+            oscServer = new OSCServer(this.currentProject);
+            oscServer.listen();
+        }
+        catch (IOException e)
+        {
+            log.fatal("Unable to start OSC Server", e);
+        }
     }
 }

@@ -14,7 +14,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.ICue;
+import soundclip.core.cues.IFadeableCue;
 import soundclip.core.interop.Signal;
 
 import java.util.*;
@@ -24,6 +27,8 @@ import java.util.*;
  */
 public class CueList implements Iterable<ICue>
 {
+    private static Logger Log = LogManager.getLogger(CueList.class);
+
     private String name;
     private final TreeMap<CueNumber, ICue> cues;
 
@@ -33,6 +38,23 @@ public class CueList implements Iterable<ICue>
     public final Signal<ICue> onCueAdded = new Signal<>();
     /** A signal that is triggered when a cue is removed from the list */
     public final Signal<ICue> onCueRemoved = new Signal<>();
+
+    /** Panic-stop all cues in the list */
+    public void panic(boolean hard)
+    {
+        Log.debug("PANIC! {} (in list {})", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully", name);
+        cues.values().parallelStream().forEach((cue) ->
+        {
+            if(hard || !(cue instanceof IFadeableCue))
+            {
+                cue.stop();
+            }
+            else
+            {
+                ((IFadeableCue)cue).fadeOut();
+            }
+        });
+    }
 
     /** A wrapper iterator to iterate over all cues in the list in order */
     private class CueListIterator implements Iterator<ICue>

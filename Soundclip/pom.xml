@@ -51,6 +51,11 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.5.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.illposed.osc</groupId>
+            <artifactId>javaosc-core</artifactId>
+            <version>0.4-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

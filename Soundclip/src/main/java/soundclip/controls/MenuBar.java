@@ -28,6 +28,9 @@ import javafx.fxml.FXMLLoader;
 import soundclip.core.Project;
 import soundclip.dialogs.AboutDialog;
 
+import java.time.Instant;
+import java.util.Date;
+
 /**
  * The top menu bar for the main window
  */
@@ -39,6 +42,8 @@ public class MenuBar extends ToolBar
     @FXML private Label subtitleLabel;
     @FXML private MenuButton addItem;
     @FXML private ToggleButton lockWorkspace;
+
+    private Date lastPanicTime = Date.from(Instant.EPOCH);
 
     public MenuBar(){
         FXMLLoader fxmlLoader = Utils.load(this, "ui/controls/MenuBar.fxml");
@@ -98,7 +103,8 @@ public class MenuBar extends ToolBar
     @FXML
     protected void doPanic(ActionEvent event)
     {
-        Log.debug("TODO: Panic!");
+        Project p = Soundclip.Instance().getCurrentProject();
+        p.panic(new Date().getTime() - lastPanicTime.getTime() < p.getPanicHardStopBefore());
     }
 
     @FXML

@@ -4,6 +4,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import soundclip.controls.MenuBar?>
+<?import soundclip.controls.NotesPane?>
+<?import javafx.scene.control.SplitPane?>
 <fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
          type="javafx.scene.layout.BorderPane" HBox.hgrow="ALWAYS" maxWidth="Infinity"
          stylesheets="/css/theme.css, /css/MainWindow.css">
@@ -11,6 +13,9 @@
         <MenuBar/>
     </top>
     <center>
-        <TabPane fx:id="cueStackContainer" tabClosingPolicy="UNAVAILABLE" />
+        <SplitPane dividerPositions="600">
+            <TabPane fx:id="cueStackContainer" minWidth="400" tabClosingPolicy="UNAVAILABLE" SplitPane.resizableWithParent="true" />
+            <NotesPane fx:id="notesPane" SplitPane.resizableWithParent="true" />
+        </SplitPane>
     </center>
 </fx:root>

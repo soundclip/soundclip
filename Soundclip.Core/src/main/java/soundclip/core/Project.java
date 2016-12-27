@@ -14,6 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
 
@@ -28,10 +30,14 @@ import java.util.Iterator;
  */
 public class Project implements Iterable<CueList>
 {
+    private static Logger Log = LogManager.getLogger(Project.class);
+
     private String projectPath;
     private String name;
     private Date lastModified;
     private boolean dirty;
+
+    private long panicHardStopBefore;
 
     private final ArrayList<CueList> cueLists;
 
@@ -55,8 +61,8 @@ public class Project implements Iterable<CueList>
         lastModified = null;
         cueLists = new ArrayList<>();
 
-        CueList defaultCueList = appendCueList("Default Cue List");
-        defaultCueList.add(new NoteCue(new CueNumber(1), "This is the default cue list", "With some default notes"));
+//        CueList defaultCueList = appendCueList("Default Cue List");
+//        defaultCueList.add(new NoteCue(new CueNumber(1), "This is the default cue list", "With some default notes"));
     }
 
     /**
@@ -144,6 +150,19 @@ public class Project implements Iterable<CueList>
 
     /** @return The number of cues in all cue lists */
     public int getCueCount() { return cueLists.stream().mapToInt(CueList::size).sum(); }
+
+    /** @return the number of milliseconds before which all cues will be hard-stopped if another panic is issued */
+    public long getPanicHardStopBefore() { return panicHardStopBefore; }
+
+    /** Set the number of milliseconds that must expire before a hard stop will not be performed */
+    public void setPanicHardStopBefore(long panicHardStopBefore) { this.panicHardStopBefore = panicHardStopBefore; }
+
+    /** Panic all cues. If {@param hard} is {@code true}, don't fade out gracefully */
+    public void panic(boolean hard)
+    {
+        Log.warn("PANIC! {}", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully");
+        cueLists.parallelStream().forEach((list) -> list.panic(hard));
+    }
 
     /**
      * Saves the project

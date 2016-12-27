@@ -64,7 +64,7 @@ public class NoteCueTests
     {
         ICue cue = new NoteCue(new CueNumber(1));
 
-        assertThat(cue.getDuration(), is(equalTo(Duration.ZERO)));
+        assertThat(cue.getDuration(), is(equalTo(javafx.util.Duration.ZERO)));
     }
 
     @Test

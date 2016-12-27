@@ -22,6 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import soundclip.controls.CueListView;
+import soundclip.controls.NotesPane;
 import soundclip.core.CueList;
 import soundclip.core.Project;
 
@@ -30,8 +31,8 @@ import soundclip.core.Project;
  */
 public class MainWindow extends BorderPane
 {
-    @FXML
-    private TabPane cueStackContainer;
+    @FXML private TabPane cueStackContainer;
+    @FXML private NotesPane notesPane;
 
     public MainWindow()
     {
