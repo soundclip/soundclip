@@ -1,4 +1,6 @@
+@import '/css/open-color.css';
+
 .notes {
-    -fx-border-color: #212529;
+    -fx-border-color: oc-gray-9;
     -fx-border-width: 1;
 }

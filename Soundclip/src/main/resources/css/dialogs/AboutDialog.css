@@ -1,8 +1,10 @@
+@import '/css/open-color.css';
+
 .hyperlink {
     -fx-border-color: transparent;
-    -fx-text-fill: #96c9ff;
+    -fx-text-fill: oc-indigo-3;
 }
 
 .hyperlink:visited {
-    -fx-text-fill: #96c9ff;
+    -fx-text-fill: oc-indigo-3;
 }

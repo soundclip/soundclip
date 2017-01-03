@@ -1,20 +1,8 @@
-/*
- Darker to lighter - https://yeun.github.io/open-color/#gray
- Grey 9 - #212529
- Grey 8 - #343a40
- Grey 7 - #495057
- Grey 6 - #868e96
- Grey 5 - #adb5bd
- Grey 4 - #ced4da
- Grey 3 - #dee2e6
- Grey 2 - #e9ecef
- Grey 1 - #f1f3f5
- Grey 0 - #f8f9fa
- */
+@import '/css/open-color.css';
 
 .root {
-    -fx-base: #343a40;
-    -fx-background: #343a40;
-    -fx-control-inner-background:  #343a40;
-    -fx-text-fill: #f8f9fa;
+    -fx-base: oc-gray-8;
+    -fx-background: oc-gray-8;
+    -fx-control-inner-background: oc-gray-8;
+    -fx-text-fill: oc-gray-8;
 }

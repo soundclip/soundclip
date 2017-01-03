@@ -1,0 +1,6 @@
+@import '/css/open-color.css';
+
+.has-error {
+    -fx-border-width: 2px;
+    -fx-border-color: oc-red-8;
+}

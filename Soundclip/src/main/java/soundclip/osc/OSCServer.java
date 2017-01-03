@@ -25,6 +25,7 @@ import soundclip.core.Project;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * The OSC Server for the specified project
@@ -149,5 +150,55 @@ public class OSCServer implements AutoCloseable
     private void onFocusNextCueList(OSCTimeStamp time, OSCMessage message)
     {
         Log.debug("Got a FOCUS NEXT LIST message at {}", time.toDate());
+    }
+
+    @OSCRoute("/transport/pause")
+    private void onTransportPause(OSCTimeStamp time, OSCMessage message)
+    {
+        Log.debug("Got a PAUSE TRANSPORT message at {}", time.toDate());
+    }
+
+    @OSCRoute("/transport/resume")
+    private void onTransportResume(OSCTimeStamp time, OSCMessage message)
+    {
+        Log.debug("Got a RESUME TRANSPORT message at {}", time.toDate());
+    }
+
+    @OSCRoute("/transport/rewind")
+    private void onRewind(OSCTimeStamp time, OSCMessage message)
+    {
+        double factor = -10;
+
+        List<Object> args = message.getArguments();
+        if(args.size() == 0) Log.warn("TRANSPORT REWIND without argument");
+        try
+        {
+            factor = (double) args.get(0);
+        }
+        catch(ClassCastException ex)
+        {
+            Log.warn("TRANSPORT REWIND called with wrong argument type ({})", args.get(0).getClass().getName());
+        }
+
+        Log.debug("Got a TRANSPORT REWIND message at {} (TODO: Rewind {}s", time.toDate(), factor);
+    }
+
+    @OSCRoute("/transport/fastforward")
+    private void onFastForward(OSCTimeStamp time, OSCMessage message)
+    {
+        double factor = 10;
+
+        List<Object> args = message.getArguments();
+        if(args.size() == 0) Log.warn("TRANSPORT FASTFORWARD without argument");
+        try
+        {
+            factor = (double) args.get(0);
+        }
+        catch(ClassCastException ex)
+        {
+            Log.warn("TRANSPORT FASTFORWARD called with wrong argument type ({})", args.get(0).getClass().getName());
+        }
+
+        Log.debug("Got a TRANSPORT FASTFORWARD message at {} (TODO: Fastforward {}s", time.toDate(), factor);
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.TextArea?>
+<?import soundclip.controls.TimePicker?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.GridPane"
+         hgap="10" vgap="5">
+    <columnConstraints>
+        <ColumnConstraints />
+        <ColumnConstraints hgrow="ALWAYS" />
+    </columnConstraints>
+
+    <Label text="Name" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+    <TextField fx:id="nameEditor" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+    <Label text="Notes" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+    <TextArea fx:id="notesEditor" GridPane.rowIndex="1" GridPane.columnIndex="1" prefRowCount="5" wrapText="true" />
+
+    <Label text="Pre-Wait Delay" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+    <TimePicker fx:id="preWaitDelay" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+    <Label text="Post-Wait Delay" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+    <TimePicker fx:id="postWaitDelay" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+</fx:root>

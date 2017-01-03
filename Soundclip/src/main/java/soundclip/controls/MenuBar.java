@@ -25,8 +25,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.Soundclip;
 import soundclip.Utils;
+import soundclip.core.CueNumber;
 import soundclip.core.Project;
 import soundclip.dialogs.AboutDialog;
+import soundclip.dialogs.AudioCueEditorDialog;
 
 import java.time.Instant;
 import java.util.Date;
@@ -121,7 +123,14 @@ public class MenuBar extends ToolBar
 
     private void doAddAudioCue(ActionEvent event)
     {
-        Log.debug("TODO: Add audio cue to current cue list");
+        // TODO: Get next number from selection or end of list
+        AudioCueEditorDialog editor = new AudioCueEditorDialog(new CueNumber(1,0,0));
+        editor.present();
+
+        if(editor.isSuccess())
+        {
+            Log.debug("TODO: Add cue to list: {}", editor.getModel());
+        }
     }
 
     private void doAddNoteCue(ActionEvent event)

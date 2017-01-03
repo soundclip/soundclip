@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import soundclip.controls.CommonCuePropertyEditor?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.HBox?>
+<?import soundclip.controls.TimePicker?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
+         stylesheets="/css/theme.css, /css/validate.css">
+    <center>
+        <GridPane hgap="10" vgap="5">
+            <padding><Insets top="5" bottom="5" left="5" right="5" /></padding>
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints />
+                <ColumnConstraints />
+            </columnConstraints>
+            <CommonCuePropertyEditor fx:id="commonEditor" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="4" />
+
+            <Label text="Audio File:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+            <TextField fx:id="audioFilePath" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2" />
+            <Button text="..." GridPane.rowIndex="1" GridPane.columnIndex="3" onAction="#showFileChooser" />
+
+            <Label text="Start Offset" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+            <TimePicker fx:id="startOffset" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+            <Label text="End Offset" GridPane.rowIndex="2" GridPane.columnIndex="2" />
+            <TimePicker fx:id="endOffset" GridPane.rowIndex="2" GridPane.columnIndex="3" />
+
+            <Label text="Fade In Over:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+            <TimePicker fx:id="fadeInOver" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+            <Label text="Fade Out Over:" GridPane.rowIndex="3" GridPane.columnIndex="2" />
+            <TimePicker fx:id="fadeOutOver" GridPane.rowIndex="3" GridPane.columnIndex="3" />
+
+            <Label text="Pitch" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+            <Slider fx:id="pitchSlider" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="3"
+                    min="-3.0" max="3.0" majorTickUnit="0.5" showTickMarks="true" showTickLabels="true"
+                    snapToTicks="true" />
+
+            <Label text="Pan" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+            <Slider fx:id="panSlider" GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="3"
+                    min="-1.0" max="1.0" majorTickUnit="0.1" showTickMarks="true" />
+
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="5">
+            <padding>
+                <Insets top="5" bottom="5" right="5" />
+            </padding>
+            <Button text="Cancel" onAction="#onCancel" />
+            <Button text="Save" onAction="#doApply" />
+        </HBox>
+    </bottom>
+</fx:root>

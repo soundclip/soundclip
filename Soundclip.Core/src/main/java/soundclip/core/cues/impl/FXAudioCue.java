@@ -301,12 +301,14 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     }
 
     /** @return the path to the audio file this cue will play, null if no file is specified */
+    @Override
     public String getSource()
     {
         return source;
     }
 
     /** Set the audio file path */
+    @Override
     public void setSource(String source)
     {
         if(source == null || source.isEmpty()) throw new IllegalArgumentException("Source cannot be null or empty");
