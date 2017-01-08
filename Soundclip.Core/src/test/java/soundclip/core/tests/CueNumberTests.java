@@ -238,6 +238,14 @@ public class CueNumberTests
     }
 
     @Test
+    public void majorNumberValid()
+    {
+        assertThat(new CueNumber(1).getMajorNumber(), is(equalTo(1)));
+        assertThat(new CueNumber(2).getMajorNumber(), is(equalTo(2)));
+        assertThat(new CueNumber(3).getMajorNumber(), is(equalTo(3)));
+    }
+
+    @Test
     public void dropsExtraZeros()
     {
         CueNumber a = new CueNumber("1.0");

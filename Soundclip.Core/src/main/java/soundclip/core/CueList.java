@@ -14,6 +14,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.ICue;
@@ -30,7 +33,8 @@ public class CueList implements Iterable<ICue>
     private static Logger Log = LogManager.getLogger(CueList.class);
 
     private String name;
-    private final TreeMap<CueNumber, ICue> cues;
+    private final ObservableList<ICue> backingList;
+    private final SortedList<ICue> cues;
 
     /** A signal that is triggered when the name of the cue list changes */
     public final Signal<String> onNameChanged = new Signal<>();
@@ -39,49 +43,11 @@ public class CueList implements Iterable<ICue>
     /** A signal that is triggered when a cue is removed from the list */
     public final Signal<ICue> onCueRemoved = new Signal<>();
 
-    /** Panic-stop all cues in the list */
-    public void panic(boolean hard)
-    {
-        Log.debug("PANIC! {} (in list {})", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully", name);
-        cues.values().parallelStream().forEach((cue) ->
-        {
-            if(hard || !(cue instanceof IFadeableCue))
-            {
-                cue.stop();
-            }
-            else
-            {
-                ((IFadeableCue)cue).fadeOut();
-            }
-        });
-    }
-
-    /** A wrapper iterator to iterate over all cues in the list in order */
-    private class CueListIterator implements Iterator<ICue>
-    {
-        private final Iterator<java.util.Map.Entry<CueNumber, ICue>> entrySetIterator;
-
-        CueListIterator(Iterator<java.util.Map.Entry<CueNumber, ICue>> entrySetIterator)
-        {
-            this.entrySetIterator = entrySetIterator;
-        }
-
-        @Override
-        public boolean hasNext()
-        {
-            return entrySetIterator.hasNext();
-        }
-
-        @Override
-        public ICue next()
-        {
-            return entrySetIterator.next().getValue();
-        }
-    }
-
     public CueList()
     {
-        cues = new TreeMap<>();
+        backingList = FXCollections.observableArrayList();
+        cues = new SortedList<>(backingList);
+        cues.setComparator(Comparator.comparing(ICue::getNumber));
         name = "Untitled Cue List";
     }
 
@@ -94,20 +60,30 @@ public class CueList implements Iterable<ICue>
     public CueList(Set<ICue> cues)
     {
         this();
-        for(ICue c : cues)
-        {
-            this.cues.put(c.getNumber(), c);
-        }
+        this.backingList.addAll(cues);
     }
 
     public CueList(String name, Set<ICue> cues)
     {
-        this();
-        for(ICue c : cues)
-        {
-            this.cues.put(c.getNumber(), c);
-        }
+        this(cues);
         this.name = name;
+    }
+
+    /** Panic-stop all cues in the list */
+    public void panic(boolean hard)
+    {
+        Log.debug("PANIC! {} (in list {})", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully", name);
+        cues.parallelStream().forEach((cue) ->
+        {
+            if(hard || !(cue instanceof IFadeableCue))
+            {
+                cue.stop();
+            }
+            else
+            {
+                ((IFadeableCue)cue).fadeOut();
+            }
+        });
     }
 
     /**
@@ -119,9 +95,13 @@ public class CueList implements Iterable<ICue>
     public void add(ICue cue)
     {
         // Append .5 to the number if the cue number already exists in the list
-        if(cues.containsKey(cue.getNumber())) cue.setNumber(new CueNumber(cue.getNumber(), 5));
+        if(cues.stream().filter(c -> c.getNumber().equals(cue.getNumber())).count() != 0)
+        {
+            Log.warn("Duplicate cue found in list ({}). Appending .5 suffix", cue.getNumber());
+            cue.setNumber(new CueNumber(cue.getNumber(), 5));
+        }
 
-        cues.put(cue.getNumber(), cue);
+        backingList.add(cue);
 
         onCueAdded.post(cue);
     }
@@ -143,11 +123,12 @@ public class CueList implements Iterable<ICue>
      */
     public void remove(CueNumber cue)
     {
-        ICue removed = cues.remove(cue);
+        Optional<ICue> removed = cues.stream().filter(c -> c.getNumber().equals(cue)).findFirst();
 
-        if(removed != null)
+        if(removed.isPresent())
         {
-            onCueRemoved.post(removed);
+            backingList.remove(removed.get());
+            onCueRemoved.post(removed.get());
         }
     }
 
@@ -174,9 +155,23 @@ public class CueList implements Iterable<ICue>
     /** @return {@code true} iff the list is empty */
     public boolean isEmpty() { return cues.isEmpty(); }
 
+    /** @return the first {@link ICue} in the list */
+    public ICue first()
+    {
+         return cues.size() > 0 ? cues.get(0) : null;
+    }
+
+    /** @return the last {@link ICue} in the list */
+    public ICue last()
+    {
+        return cues.size() > 0 ? cues.get(cues.size() - 1) : null;
+    }
+
+    public SortedList<ICue> getCues() { return cues; }
+
     @Override
     public Iterator<ICue> iterator()
     {
-        return new CueListIterator(cues.entrySet().iterator());
+        return cues.iterator();
     }
 }

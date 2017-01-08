@@ -29,6 +29,7 @@ import soundclip.core.CueNumber;
 import soundclip.core.Project;
 import soundclip.dialogs.AboutDialog;
 import soundclip.dialogs.AudioCueEditorDialog;
+import soundclip.dialogs.NoteCueEditorDialog;
 
 import java.time.Instant;
 import java.util.Date;
@@ -122,19 +123,41 @@ public class MenuBar extends FXHeaderBar
 
     private void doAddAudioCue(ActionEvent event)
     {
-        // TODO: Get next number from selection or end of list
-        AudioCueEditorDialog editor = new AudioCueEditorDialog(new CueNumber(1,0,0));
+        Optional<CueListView> view = Soundclip.Instance().getActiveCueListView();
+        if(!view.isPresent())
+        {
+            Log.warn("No cue list selected. Someone messed up");
+            return;
+        }
+
+        CueListView selectedCueList = view.get();
+
+        AudioCueEditorDialog editor = new AudioCueEditorDialog(selectedCueList.getNextCueNumber());
         editor.present();
 
         if(editor.isSuccess())
         {
-            Log.debug("TODO: Add cue to list: {}", editor.getModel());
+            selectedCueList.getModel().add(editor.getModel());
         }
     }
 
     private void doAddNoteCue(ActionEvent event)
     {
-        Log.debug("TODO: Add note cue to current cue list");
+        Optional<CueListView> view = Soundclip.Instance().getActiveCueListView();
+        if(!view.isPresent())
+        {
+            Log.warn("No cue list selected. Someone messed up");
+            return;
+        }
+
+        CueListView selectedCueList = view.get();
+        NoteCueEditorDialog editor = new NoteCueEditorDialog(selectedCueList.getNextCueNumber());
+        editor.present();
+
+        if(editor.isSuccess())
+        {
+            selectedCueList.getModel().add(editor.getModel());
+        }
     }
 
     private void doAddCueList(ActionEvent event)

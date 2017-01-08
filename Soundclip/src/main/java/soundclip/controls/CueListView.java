@@ -21,8 +21,11 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import soundclip.Utils;
 import soundclip.core.CueList;
+import soundclip.core.CueNumber;
 import soundclip.core.cues.ICue;
 
 /**
@@ -30,6 +33,8 @@ import soundclip.core.cues.ICue;
  */
 public class CueListView extends Tab
 {
+    private static final Logger Log = LogManager.getLogger(CueListView.class);
+
     private final CueList model;
 
     @FXML private TableView<ICue> tableView;
@@ -53,14 +58,7 @@ public class CueListView extends Tab
         setText(model.getName());
         model.onNameChanged.whenTriggered(this::setText);
 
-        // TODO: Force ordering by cue number
-        model.onCueAdded.whenTriggered((cue) -> tableView.getItems().add(cue));
-        for(ICue cue : model)
-        {
-            tableView.getItems().add(cue);
-        }
-
-        model.onCueRemoved.whenTriggered((cue) -> tableView.getItems().remove(cue));
+        tableView.setItems(model.getCues());
 
         preWaitCell.setCellFactory(column -> new TableCell<ICue, Duration>(){
             @Override
@@ -133,7 +131,6 @@ public class CueListView extends Tab
                         setStyle("");
                     }
 
-
                     //TODO: Style only if playing
                 }else{
                     setText("");
@@ -150,6 +147,16 @@ public class CueListView extends Tab
 
     public ICue getSelectedCue()
     {
-         return (ICue) tableView.getSelectionModel().getSelectedItem();
+         return tableView.getSelectionModel().getSelectedItem();
+    }
+
+    public CueNumber getNextCueNumber()
+    {
+        if(model.size() == 0) return new CueNumber(1);
+
+        ICue selectedCue = getSelectedCue();
+        if(selectedCue == null) return new CueNumber(model.last().getNumber().getMajorNumber() + 1);
+
+        return new CueNumber(selectedCue.getNumber(), 5);
     }
 }

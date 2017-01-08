@@ -38,7 +38,7 @@ import java.io.File;
 
 
 /**
- * The editor for audio cues
+ * The editor for cues implementing {@link soundclip.core.cues.IAudioCue}
  */
 public class AudioCueEditorDialog extends BorderPane
 {

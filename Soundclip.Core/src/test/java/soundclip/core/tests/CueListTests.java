@@ -19,6 +19,7 @@ import org.mockito.Matchers;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
 import soundclip.core.cues.ICue;
+import soundclip.core.cues.IFadeableCue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -112,7 +113,9 @@ public class CueListTests
         ICue b = mock(ICue.class);
 
         when(a.getNumber()).thenReturn(new CueNumber(1));
+        doThrow(new IllegalStateException("This should not be called")).when(a).setNumber(Matchers.any(CueNumber.class));
         when(b.getNumber()).thenReturn(new CueNumber(2));
+        doThrow(new IllegalStateException("This should not be called")).when(b).setNumber(Matchers.any(CueNumber.class));
 
         CueList list = new CueList();
 
@@ -210,5 +213,80 @@ public class CueListTests
 
         assertThat(list.getName(), is(equalTo("b")));
         assertThat(callbackCalledProxy[0], is(true));
+    }
+
+    @Test
+    public void hardPanicValid()
+    {
+        ICue a = mock(ICue.class);
+        ICue b = mock(ICue.class);
+        IFadeableCue c = mock(IFadeableCue.class);
+
+        when(a.getNumber()).thenReturn(new CueNumber(1));
+        when(b.getNumber()).thenReturn(new CueNumber(2));
+        when(c.getNumber()).thenReturn(new CueNumber(3));
+
+        CueList list = new CueList("MyCueList", new HashSet<>(Arrays.asList(a, b, c)));
+
+        list.panic(true);
+
+        verify(a, times(1)).stop();
+        verify(b, times(1)).stop();
+        verify(c, times(1)).stop();
+        verify(c, times(0)).fadeOut();
+    }
+
+    @Test
+    public void normalPanicValid()
+    {
+        ICue a = mock(ICue.class);
+        ICue b = mock(ICue.class);
+        IFadeableCue c = mock(IFadeableCue.class);
+
+        when(a.getNumber()).thenReturn(new CueNumber(1));
+        when(b.getNumber()).thenReturn(new CueNumber(2));
+        when(c.getNumber()).thenReturn(new CueNumber(3));
+
+        CueList list = new CueList("MyCueList", new HashSet<>(Arrays.asList(a, b, c)));
+
+        list.panic(false);
+
+        verify(a, times(1)).stop();
+        verify(b, times(1)).stop();
+        verify(c, times(0)).stop();
+        verify(c, times(1)).fadeOut();
+    }
+
+    @Test
+    public void canGetFirstAndLastCue()
+    {
+        ICue a = mock(ICue.class);
+        ICue b = mock(ICue.class);
+        ICue c = mock(ICue.class);
+
+        when(a.getNumber()).thenReturn(new CueNumber(1));
+        when(b.getNumber()).thenReturn(new CueNumber(2));
+        when(c.getNumber()).thenReturn(new CueNumber(3));
+
+        CueList list = new CueList("MyCueList", new HashSet<>(Arrays.asList(a,b,c)));
+
+        assertThat(list.first().getNumber(), is(equalTo(new CueNumber(1))));
+        assertThat(list.last().getNumber(), is(equalTo(new CueNumber(3))));
+    }
+
+    @Test
+    public void canGetRawSortedList()
+    {
+        ICue a = mock(ICue.class);
+        ICue b = mock(ICue.class);
+        ICue c = mock(ICue.class);
+
+        when(a.getNumber()).thenReturn(new CueNumber(1));
+        when(b.getNumber()).thenReturn(new CueNumber(2));
+        when(c.getNumber()).thenReturn(new CueNumber(3));
+
+        CueList list = new CueList("MyCueList", new HashSet<>(Arrays.asList(a,b,c)));
+
+        assertThat(list.getCues().size(), is(equalTo(3)));
     }
 }

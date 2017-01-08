@@ -148,6 +148,12 @@ public class CueNumber implements Comparable<CueNumber>
         toString = parts.stream().map(Object::toString).collect(Collectors.joining("."));
     }
 
+    /** @return The first part of the cue number */
+    public int getMajorNumber()
+    {
+        return parts.get(0);
+    }
+
     @Override
     public String toString()
     {

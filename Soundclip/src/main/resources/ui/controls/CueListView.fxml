@@ -12,7 +12,7 @@
             <Label text="No cues in Cue List" />
         </placeholder>
         <columns>
-            <TableColumn fx:id="numberCell" text="#" sortable="false" minWidth="50" maxWidth="50"
+            <TableColumn fx:id="numberCell" text="#" sortable="false" minWidth="75" maxWidth="75"
                          styleClass="centered-cell">
                 <cellValueFactory>
                     <PropertyValueFactory property="number" />
