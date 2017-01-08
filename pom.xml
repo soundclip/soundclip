@@ -17,6 +17,7 @@
         <module>Soundclip</module>
         <module>Soundclip.Core</module>
         <module>lib/JavaOSC</module>
+        <module>lib/FXHeaderBar</module>
     </modules>
 
     <build>

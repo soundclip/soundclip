@@ -10,7 +10,7 @@
          type="javafx.scene.layout.BorderPane" HBox.hgrow="ALWAYS" maxWidth="Infinity"
          stylesheets="/css/theme.css, /css/MainWindow.css">
     <top>
-        <MenuBar/>
+        <MenuBar fx:id="menuBar"/>
     </top>
     <center>
         <SplitPane dividerPositions="600">

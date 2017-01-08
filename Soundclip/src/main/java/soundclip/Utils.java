@@ -26,6 +26,7 @@ public class Utils
 {
     public static FXMLLoader load(Object controller, String fxml){
         FXMLLoader fxmlLoader = new FXMLLoader(controller.getClass().getClassLoader().getResource(fxml));
+        fxmlLoader.setClassLoader(Utils.class.getClassLoader());
 
         fxmlLoader.setRoot(controller);
         fxmlLoader.setController(controller);

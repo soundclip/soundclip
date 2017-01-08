@@ -1,0 +1,28 @@
+.window-control {
+    -fx-background-color: transparent;
+    -fx-scale-x: 0.75;
+    -fx-scale-y: 0.75;
+    -fx-padding: 0.5em;
+}
+
+.window-control:hover {
+    -fx-background-color: rgba(0,0,0,0.1);
+}
+
+.window-control.white:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+.window-control-container {
+    -fx-padding: 0;
+}
+
+#fxheaderbar-windowctl-minimize { -fx-graphic: url("/ic_remove_black_24dp_1x.png"); }
+#fxheaderbar-windowctl-maximize.maximize { -fx-graphic: url("/ic_fullscreen_black_24dp_1x.png"); }
+#fxheaderbar-windowctl-maximize.restore  { -fx-graphic: url("/ic_fullscreen_exit_black_24dp_1x.png"); }
+#fxheaderbar-windowctl-close { -fx-graphic: url("/ic_close_black_24dp_1x.png"); }
+
+#fxheaderbar-windowctl-minimize.white { -fx-graphic: url("/ic_remove_white_24dp_1x.png"); }
+#fxheaderbar-windowctl-maximize.white.maximize { -fx-graphic: url("/ic_fullscreen_white_24dp_1x.png"); }
+#fxheaderbar-windowctl-maximize.white.restore  { -fx-graphic: url("/ic_fullscreen_exit_white_24dp_1x.png"); }
+#fxheaderbar-windowctl-close.white { -fx-graphic: url("/ic_close_white_24dp_1x.png"); }

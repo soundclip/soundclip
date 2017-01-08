@@ -1,44 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="me.nlowe.fxheaderbar.FXHeaderBar"
+         stylesheets="/css/controls/MenuBar.css">
 
-<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.control.ToolBar"
-         minHeight="40" maxHeight="40" prefHeight="40" stylesheets="/css/controls/MenuBar.css">
+    <left>
+        <Button id="openProject" onAction="#doOpenProject" />
+        <Button id="newProject"  onAction="#doNewProject" />
+        <Button id="saveProject" onAction="#doSaveProject" />
+        <Separator orientation="VERTICAL"/>
+        <MenuButton fx:id="addItem"/>
+    </left>
 
-    <!-- Left Items -->
-    <Button id="openProject" onAction="#doOpenProject" />
-    <Button id="newProject"  onAction="#doNewProject" />
-    <Button id="saveProject" onAction="#doSaveProject" />
-    <Separator orientation="VERTICAL"/>
-    <MenuButton fx:id="addItem"/>
-
-    <Pane><HBox.hgrow>ALWAYS</HBox.hgrow></Pane>
-
-    <!-- Center Items -->
-    <GridPane hgap="10" vgap="2" alignment="CENTER">
-        <columnConstraints>
-            <ColumnConstraints halignment="CENTER" />
-        </columnConstraints>
-        <Label fx:id="titleLabel" text="Untitled Project" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="subtitleLabel" text="Not Saved" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
-
-    <Pane><HBox.hgrow>ALWAYS</HBox.hgrow></Pane>
-
-    <!-- Right Items -->
-    <Button id="panic" onAction="#doPanic"/>
-    <Separator orientation="VERTICAL"/>
-    <ToggleButton fx:id="lockWorkspace" onAction="#toggleWorkspaceLock"/>
-    <MenuButton id="menu">
-        <items>
-            <MenuItem text="Renumber CueList" />
-            <MenuItem text="Rename CueList" onAction="#onRenameCueList"/>
-            <MenuItem text="Project Properties" />
-            <MenuItem text="About" onAction="#onAbout"/>
-        </items>
-    </MenuButton>
+    <right>
+        <Button id="panic" onAction="#doPanic"/>
+        <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="lockWorkspace" onAction="#toggleWorkspaceLock"/>
+        <MenuButton id="menu">
+            <items>
+                <MenuItem text="Renumber CueList" />
+                <MenuItem text="Rename CueList" onAction="#onRenameCueList"/>
+                <MenuItem text="Project Properties" />
+                <MenuItem text="About" onAction="#onAbout"/>
+            </items>
+        </MenuButton>
+    </right>
 </fx:root>

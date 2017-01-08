@@ -20,7 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.stage.StageStyle;
+import me.nlowe.fxheaderbar.FXHeaderBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.Soundclip;
@@ -37,12 +37,10 @@ import java.util.Optional;
 /**
  * The top menu bar for the main window
  */
-public class MenuBar extends ToolBar
+public class MenuBar extends FXHeaderBar
 {
     private static Logger Log = LogManager.getLogger(MenuBar.class);
 
-    @FXML private Label titleLabel;
-    @FXML private Label subtitleLabel;
     @FXML private MenuButton addItem;
     @FXML private ToggleButton lockWorkspace;
 
@@ -53,13 +51,14 @@ public class MenuBar extends ToolBar
 
         Project p = Soundclip.Instance().getCurrentProject();
 
-        titleLabel.setText(p.getName());
-        p.onRenamed.whenTriggered((name) -> titleLabel.setText(name));
+        setTitle(p.getName());
+        p.onRenamed.whenTriggered(this::setTitle);
 
-        subtitleLabel.setText(p.getPath() == null ? "Not Saved" : p.getPath());
-        p.onPathSet.whenTriggered((path) -> subtitleLabel.setText(path));
+        setSubtitle(p.getPath() == null ? "Not Saved" : p.getPath());
+        p.onPathSet.whenTriggered(this::setSubtitle);
 
         initAddItems(addItem.getItems());
+        useLightIcons();
     }
 
     private void initAddItems(ObservableList<MenuItem> i)

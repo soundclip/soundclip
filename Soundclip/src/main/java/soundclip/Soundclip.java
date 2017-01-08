@@ -21,6 +21,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.controllers.MainWindow;
@@ -57,6 +58,7 @@ public class Soundclip extends Application
     public void start(Stage primaryStage) throws Exception
     {
         singleton = this;
+        primaryStage.initStyle(StageStyle.UNDECORATED);
 
         log.info("Starting Up " + VERSION.toString());
 
@@ -75,6 +77,7 @@ public class Soundclip extends Application
                 new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_32x32.png"))
         );
         primaryStage.setScene(new Scene(primaryController, 800, 600));
+        primaryController.getMenuBar().syncToStage(primaryStage);
         primaryStage.show();
     }
 
