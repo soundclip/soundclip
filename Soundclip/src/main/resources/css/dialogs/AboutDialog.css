@@ -1,10 +1,10 @@
-@import '/css/open-color.css';
+@import '/css/material-color.css';
 
 .hyperlink {
     -fx-border-color: transparent;
-    -fx-text-fill: oc-indigo-3;
+    -fx-text-fill: md-indigo-A200;
 }
 
 .hyperlink:visited {
-    -fx-text-fill: oc-indigo-3;
+    -fx-text-fill: md-indigo-A200;
 }

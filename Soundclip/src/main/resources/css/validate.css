@@ -1,6 +1,6 @@
-@import '/css/open-color.css';
+@import '/css/material-color.css';
 
 .has-error {
     -fx-border-width: 2px;
-    -fx-border-color: oc-red-8;
+    -fx-border-color: md-red-A400;
 }

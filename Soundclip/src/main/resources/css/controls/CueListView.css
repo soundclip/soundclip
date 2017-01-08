@@ -1,4 +1,4 @@
-@import '/css/open-color.css';
+@import '/css/material-color.css';
 
 .centered-cell {
     -fx-alignment: CENTER;
@@ -14,9 +14,9 @@
 }
 
 .table-row-cell:selected {
-    -fx-background-color: oc-blue-8;
+    -fx-background-color: md-blue-800;
 }
 
 .cell-muted-text {
-    -fx-text-fill: oc-gray-6;
+    -fx-text-fill: md-grey-600;
 }

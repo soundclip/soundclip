@@ -1,6 +1,6 @@
-@import '/css/open-color.css';
+@import '/css/material-color.css';
 
 .notes {
-    -fx-border-color: oc-gray-9;
+    -fx-border-color: md-grey-900;
     -fx-border-width: 1;
 }

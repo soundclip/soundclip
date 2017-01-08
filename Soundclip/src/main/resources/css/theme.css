@@ -1,8 +1,15 @@
-@import '/css/open-color.css';
+@import '/css/material-color.css';
 
 .root {
-    -fx-base: oc-gray-8;
-    -fx-background: oc-gray-8;
-    -fx-control-inner-background: oc-gray-8;
-    -fx-text-fill: oc-gray-8;
+    -fx-base: md-grey-850;
+    -fx-background: md-grey-850;
+    -fx-control-inner-background: md-grey-850;
+    -fx-text-fill: md-grey-850;
+}
+
+.header-bar {
+    -fx-base: md-grey-900;
+    -fx-background: md-grey-900;
+    -fx-control-inner-background: md-grey-900;
+    -fx-text-fill: md-grey-900;
 }
