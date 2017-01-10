@@ -84,6 +84,8 @@ public class MainWindow extends BorderPane
         }
     }
 
+    public NotesPane getNotesPane() { return notesPane; }
+
     public MenuBar getMenuBar()
     {
         return menuBar;

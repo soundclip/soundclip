@@ -38,6 +38,7 @@ public class Project implements Iterable<CueList>
     private boolean dirty;
 
     private long panicHardStopBefore = 3 * 1000;
+    private long lastPanicAt = 0;
 
     private final ArrayList<CueList> cueLists;
 
@@ -155,6 +156,14 @@ public class Project implements Iterable<CueList>
 
     /** Set the number of milliseconds that must expire before a hard stop will not be performed */
     public void setPanicHardStopBefore(long panicHardStopBefore) { this.panicHardStopBefore = panicHardStopBefore; }
+
+    /** Panic all cues. */
+    public void panic()
+    {
+        long now = System.currentTimeMillis();
+        panic(now - lastPanicAt <= getPanicHardStopBefore());
+        lastPanicAt = now;
+    }
 
     /** Panic all cues. If {@param hard} is {@code true}, don't fade out gracefully */
     public void panic(boolean hard)

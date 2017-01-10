@@ -27,6 +27,7 @@ import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
 import soundclip.core.cues.IAudioCue;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -201,6 +202,11 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     public void stop()
     {
         if(backend != null) backend.stop();
+        if(fadeTimeline != null)
+        {
+            fadeTimeline.stop();
+            backend.setVolume(1.0);
+        }
     }
 
     @Override
@@ -273,7 +279,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
 
         fadeTimeline = new Timeline(
                 new KeyFrame(
-                        javafx.util.Duration.millis(fadeOutDuration.toMillis()),
+                        javafx.util.Duration.seconds(3),
                         new KeyValue(backend.volumeProperty(), 0.0)
                 )
         );
@@ -318,7 +324,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
         if(backend != null) backend.stop();
         backend = null;
 
-        backendSource = new Media(source);
+        backendSource = new Media(new File(source).toURI().toString());
         backend = new MediaPlayer(backendSource);
     }
 

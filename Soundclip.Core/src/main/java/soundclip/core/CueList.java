@@ -77,10 +77,12 @@ public class CueList implements Iterable<ICue>
         {
             if(hard || !(cue instanceof IFadeableCue))
             {
+                Log.debug("PANIC! Stopping {} - {}", cue.getNumber(), cue.getName());
                 cue.stop();
             }
             else
             {
+                Log.debug("PANIC! Fading out {} - {}", cue.getNumber(), cue.getName());
                 ((IFadeableCue)cue).fadeOut();
             }
         });
@@ -155,10 +157,37 @@ public class CueList implements Iterable<ICue>
     /** @return {@code true} iff the list is empty */
     public boolean isEmpty() { return cues.isEmpty(); }
 
+    /** @return the index of the specified cue, or -1 if the cue is not in the list */
+    public int indexOf(ICue c) { return cues.indexOf(c); }
+
     /** @return the first {@link ICue} in the list */
     public ICue first()
     {
          return cues.size() > 0 ? cues.get(0) : null;
+    }
+
+    /**
+     * @return the cue before the specified cue
+     * @param c the cue
+     */
+    public ICue previous(ICue c)
+    {
+        int i = cues.indexOf(c);
+        if(i <= 0) return null;
+
+        return cues.get(i-1);
+    }
+
+    /**
+     * @return the cue following the specified cue
+     * @param c the cue
+     */
+    public ICue next(ICue c)
+    {
+        int i = cues.indexOf(c);
+        if(i == cues.size() - 1 || i == -1) return null;
+
+        return cues.get(i+1);
     }
 
     /** @return the last {@link ICue} in the list */

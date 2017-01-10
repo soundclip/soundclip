@@ -38,8 +38,8 @@ public class NotesPane extends GridPane
 
     public void updateNotes(ICue previous, ICue current, ICue onDeck)
     {
-        if(previous != null) previousNotes.setText(previous.getNotes());
-        if(current  != null) currentNotes.setText(current.getNotes());
-        if(onDeck   != null) onDeckNotes.setText(onDeck.getNotes());
+        previousNotes.setText(previous != null ? previous.getNotes() : "");
+        currentNotes.setText(current != null ? current.getNotes() : "");
+        onDeckNotes.setText(onDeck != null ? onDeck.getNotes() : "");
     }
 }

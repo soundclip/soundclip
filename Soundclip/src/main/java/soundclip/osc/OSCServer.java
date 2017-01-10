@@ -20,6 +20,8 @@ import com.illposed.osc.messageselector.OSCPatternAddressMessageSelector;
 import com.illposed.osc.transport.udp.OSCPortIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import soundclip.Soundclip;
+import soundclip.controls.CueListView;
 import soundclip.core.Project;
 
 import java.io.IOException;
@@ -36,8 +38,6 @@ public class OSCServer implements AutoCloseable
 
     private final Project project;
     private final OSCPortIn listener;
-
-    private long lastOSCPanicAt = 0;
 
     public OSCServer(Project project) throws IOException
     {
@@ -116,6 +116,7 @@ public class OSCServer implements AutoCloseable
     private void onGoNextCue(OSCTimeStamp time, OSCMessage message)
     {
         Log.debug("Got GO NEXT CUE message at {}", time.toDate());
+        Soundclip.Instance().getActiveCueListView().ifPresent(CueListView::goNextCue);
     }
 
     @OSCRoute("/panic")
@@ -123,21 +124,21 @@ public class OSCServer implements AutoCloseable
     {
         Log.debug("Got a PANIC message at {}", time.toDate());
 
-        long now = System.currentTimeMillis();
-        project.panic(now - lastOSCPanicAt <= project.getPanicHardStopBefore());
-        lastOSCPanicAt = now;
+        project.panic();
     }
 
     @OSCRoute("/focus/previous/cue")
     private void onFocusPreviousCue(OSCTimeStamp time, OSCMessage message)
     {
         Log.debug("Got a FOCUS PREVIOUS CUE message at {}", time.toDate());
+        Soundclip.Instance().getActiveCueListView().ifPresent(CueListView::focusPrevious);
     }
 
     @OSCRoute("/focus/next/cue")
     private void onFocusNextCue(OSCTimeStamp time, OSCMessage message)
     {
         Log.debug("Got a FOCUS NEXT CUE message at {}", time.toDate());
+        Soundclip.Instance().getActiveCueListView().ifPresent(CueListView::focusNext);
     }
 
     @OSCRoute("/focus/previous/list")

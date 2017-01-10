@@ -35,6 +35,7 @@ import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.impl.FXAudioCue;
 
 import java.io.File;
+import java.util.Objects;
 
 
 /**
@@ -69,6 +70,8 @@ public class AudioCueEditorDialog extends BorderPane
         model = cue;
         commonEditor.setModel(model);
 
+        audioFilePath.setText(model.getSource());
+
         panSlider.setValue(model.getPan());
         pitchSlider.setValue(model.getPitch());
 
@@ -91,7 +94,7 @@ public class AudioCueEditorDialog extends BorderPane
     {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.aif", "*.aiff"),
+            new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aif", "*.aiff"),
             new FileChooser.ExtensionFilter("Video Files", "*.mp4", "*.m4a", "*.m4v")
         );
         fc.setTitle("Select Audio File");
@@ -124,7 +127,7 @@ public class AudioCueEditorDialog extends BorderPane
         isSuccess = true;
 
         commonEditor.apply();
-        Log.debug("TODO: Set audio path to {}", audioFilePath.getText());
+        if(!audioFilePath.getText().equals(model.getSource())) model.setSource(audioFilePath.getText());
         model.setPan(panSlider.getValue());
         model.setPitch(pitchSlider.getValue());
 

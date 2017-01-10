@@ -1,10 +1,10 @@
 @import '/css/material-color.css';
 
 .root {
-    -fx-base: md-grey-850;
-    -fx-background: md-grey-850;
-    -fx-control-inner-background: md-grey-850;
-    -fx-text-fill: md-grey-850;
+    -fx-base: md-grey-800;
+    -fx-background: md-grey-800;
+    -fx-control-inner-background: md-grey-800;
+    -fx-text-fill: md-grey-800;
 }
 
 .header-bar {

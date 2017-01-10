@@ -20,13 +20,21 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import soundclip.Soundclip;
 import soundclip.Utils;
+import soundclip.controllers.MainWindow;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
+import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
+import soundclip.core.cues.impl.NoteCue;
+import soundclip.dialogs.AudioCueEditorDialog;
+import soundclip.dialogs.NoteCueEditorDialog;
 
 /**
  * A view for {@link soundclip.core.CueList}
@@ -72,7 +80,7 @@ public class CueListView extends Tab
                         double percent = 100 * (item.toMillis() / model.getPreWaitDelay().toMillis());
                         setStyle("-fx-background-color: linear-gradient(" +
                                 "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                                "-progress-green, -progress-green 99.99%, transparent" +
+                                "md-light-green-A700, md-light-green-A700 99.99%, transparent" +
                                 ");");
                     }else{
                         setText(Utils.durationToString(model.getPreWaitDelay()));
@@ -97,7 +105,7 @@ public class CueListView extends Tab
                         double percent = 100 * (item.toMillis() / model.getDuration().toMillis());
                         setStyle("-fx-background-color: linear-gradient(" +
                                 "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                                "-progress-green, -progress-green 99.99%, transparent" +
+                                "md-light-green-A700, md-light-green-A700 99.99%, transparent" +
                                 ");");
                     }else{
                         setText(Utils.durationToString(model.getDuration()));
@@ -124,7 +132,7 @@ public class CueListView extends Tab
                         double percent = 100 * (item.toMillis() / model.getPostWaitDelay().toMillis());
                         setStyle("-fx-background-color: linear-gradient(" +
                                 "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                                "-progress-green, -progress-green 99.99%, transparent" +
+                                "md-light-green-A700, md-light-green-A700 99.99%, transparent" +
                                 ");");
                     }else{
                         setText(Utils.durationToString(model.getPostWaitDelay()));
@@ -138,6 +146,44 @@ public class CueListView extends Tab
             }
         });
 
+        tableView.setOnKeyReleased((e) -> {
+            if(e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER)
+            {
+                e.consume();
+                goNextCue();
+            }
+            else if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.BACK_SPACE)
+            {
+                e.consume();
+                Soundclip.Instance().getCurrentProject().panic();
+            }
+        });
+
+        tableView.setOnMouseClicked((e) -> {
+            // TODO: Disregard if project is locked
+            if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY)
+            {
+                ICue c = getSelectedCue();
+                if(c instanceof IAudioCue)
+                {
+                    new AudioCueEditorDialog((IAudioCue)c).present();
+                }
+                else if(c instanceof NoteCue)
+                {
+                    new NoteCueEditorDialog((NoteCue)c).present();
+                }
+                else
+                {
+                    Log.fatal("Encountered an unknown cue type: {}", c.getClass().getTypeName());
+                }
+            }
+        });
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((prop, oldValue, newValue) -> {
+            NotesPane notes = Soundclip.Instance().getController().getNotesPane();
+
+            notes.updateNotes(model.previous(newValue), newValue, model.next(newValue));
+        });
     }
 
     public CueList getModel()
@@ -150,12 +196,41 @@ public class CueListView extends Tab
          return tableView.getSelectionModel().getSelectedItem();
     }
 
+    public int getSelectedIndex() { return tableView.getSelectionModel().getSelectedIndex(); }
+
+    public void goNextCue() {
+        int i = getSelectedIndex();
+        ICue c = getSelectedCue();
+
+        Log.debug("GO {} - {}", c.getNumber(), c.getName());
+        c.go();
+
+        if(++i < model.size()) tableView.getSelectionModel().select(i);
+    }
+
+    public void focusPrevious() {
+        int i = getSelectedIndex() - 1;
+        if(i < 0 ) i = 0;
+        if(i >= getModel().size() -1 ) i = getModel().size() - 1;
+
+        tableView.getSelectionModel().select(i);
+    }
+
+    public void focusNext()
+    {
+        int i = getSelectedIndex() + 1;
+        if(i < 0 ) i = 0;
+        if(i >= getModel().size() -1 ) i = getModel().size() - 1;
+
+        tableView.getSelectionModel().select(i);
+    }
+
     public CueNumber getNextCueNumber()
     {
         if(model.size() == 0) return new CueNumber(1);
 
         ICue selectedCue = getSelectedCue();
-        if(selectedCue == null) return new CueNumber(model.last().getNumber().getMajorNumber() + 1);
+        if(selectedCue == null || model.indexOf(selectedCue) == model.size() - 1 ) return new CueNumber(model.last().getNumber().getMajorNumber() + 1);
 
         return new CueNumber(selectedCue.getNumber(), 5);
     }
