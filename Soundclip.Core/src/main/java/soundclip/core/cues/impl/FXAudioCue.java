@@ -50,6 +50,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     private String source;
     private Media backendSource;
     private MediaPlayer backend;
+    private SimpleObjectProperty<Duration> progressPropertyWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
 
     private Timeline fadeTimeline;
     private Duration preWaitDelay;
@@ -225,7 +226,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     @Override
     public ReadOnlyObjectProperty<Duration> progressProperty()
     {
-        return backend == null ? new SimpleObjectProperty<>(Duration.UNKNOWN) : backend.currentTimeProperty();
+        return progressPropertyWrapper;
     }
 
     @Override
@@ -245,6 +246,12 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     public Duration getPostWaitProgress()
     {
         return Duration.ZERO;
+    }
+
+    @Override
+    public boolean isPerformingAction()
+    {
+        return backend != null && (backend.getStatus() == MediaPlayer.Status.PLAYING || backend.getStatus() == MediaPlayer.Status.PAUSED);
     }
 
     @Override
@@ -321,11 +328,25 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
 
         this.source = source;
 
-        if(backend != null) backend.stop();
+        if(backend != null)
+        {
+            progressPropertyWrapper.unbind();
+            backend.stop();
+        }
         backend = null;
 
         backendSource = new Media(new File(source).toURI().toString());
         backend = new MediaPlayer(backendSource);
+
+        backend.setOnReady(() -> {
+            progressPropertyWrapper.bind(backend.currentTimeProperty());
+        });
+    }
+
+    @Override
+    public String[] getSupportedExtensions()
+    {
+        return new String[]{"wav", "mp3", "aif", "aiff", "mp4", "m4a", "m4v"};
     }
 
     @Override

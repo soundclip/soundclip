@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controls;
 
+import com.google.common.io.Files;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
@@ -22,6 +23,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,9 +34,13 @@ import soundclip.core.CueList;
 import soundclip.core.CueNumber;
 import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
+import soundclip.core.cues.impl.FXAudioCue;
 import soundclip.core.cues.impl.NoteCue;
 import soundclip.dialogs.AudioCueEditorDialog;
 import soundclip.dialogs.NoteCueEditorDialog;
+
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * A view for {@link soundclip.core.CueList}
@@ -99,7 +105,7 @@ public class CueListView extends Tab
                 if(item != null && !empty){
                     ICue model = getTableView().getItems().get(getIndex());
 
-                    if(item.greaterThan(Duration.ZERO)){
+                    if(model.isPerformingAction()){
                         setText(Utils.durationToString(item));
 
                         double percent = 100 * (item.toMillis() / model.getDuration().toMillis());
@@ -183,6 +189,48 @@ public class CueListView extends Tab
             NotesPane notes = Soundclip.Instance().getController().getNotesPane();
 
             notes.updateNotes(model.previous(newValue), newValue, model.next(newValue));
+        });
+
+        tableView.setOnDragOver((e) -> {
+            if(e.getDragboard().hasFiles())
+            {
+                e.acceptTransferModes(TransferMode.COPY);
+            }
+            else
+            {
+                e.consume();
+            }
+        });
+
+        tableView.setOnDragDropped((e) -> {
+            boolean success = false;
+
+            if(e.getDragboard().hasFiles())
+            {
+                success = true;
+                String[] extensions = new FXAudioCue(new CueNumber(1)).getSupportedExtensions();
+
+                for(File f : e.getDragboard().getFiles())
+                {
+                    String fileExtension = Files.getFileExtension(f.getAbsolutePath());
+                    if(Arrays.stream(extensions).anyMatch(fileExtension::equals))
+                    {
+                        IAudioCue cue = new FXAudioCue(getNextCueNumber());
+                        cue.setSource(f.getAbsolutePath());
+                        cue.setName(f.getName());
+
+                        Log.info("Adding dropped cue {} - {}", cue.getNumber(), cue.getName());
+                        model.add(cue);
+                    }
+                    else
+                    {
+                        Log.warn("Could not import '{}' (No audio backends support this file)", f.getAbsolutePath());
+                    }
+                }
+            }
+
+            e.setDropCompleted(success);
+            e.consume();
         });
     }
 

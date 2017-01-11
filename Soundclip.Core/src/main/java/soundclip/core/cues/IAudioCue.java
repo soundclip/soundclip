@@ -13,4 +13,7 @@ public interface IAudioCue extends IFadeableCue, ISeekableCue, IPitchableCue, IP
      * @param source the audio file to play
      */
     void setSource(String source);
+
+    /** @return A collection of supported file extensions */
+    String[] getSupportedExtensions();
 }

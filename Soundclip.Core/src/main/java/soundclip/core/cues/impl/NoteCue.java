@@ -159,4 +159,10 @@ public class NoteCue implements ICue
     {
         return Duration.ZERO;
     }
+
+    @Override
+    public boolean isPerformingAction()
+    {
+        return false;
+    }
 }
