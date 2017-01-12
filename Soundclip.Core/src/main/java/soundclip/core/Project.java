@@ -14,11 +14,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +41,7 @@ public class Project implements Iterable<CueList>
 
     private String projectPath;
     private String name;
-    private Date lastModified;
+    private Date lastModified = new Date(0);
     private boolean dirty;
 
     private long panicHardStopBefore = 3 * 1000;
@@ -76,9 +83,36 @@ public class Project implements Iterable<CueList>
     {
         this();
 
-        cueLists.clear();
+        File f = new File(fromPath);
 
-        // TODO: Load project
+        if(!f.exists() || !f.isFile()) throw new IllegalArgumentException("File does not exist or is not a file '" + fromPath + "'");
+        Log.info("Loading project from '{}'", fromPath);
+
+        projectPath = fromPath;
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode project = mapper.readTree(f);
+
+        try
+        {
+            name = project.get("name").asText();
+            lastModified = new Date(project.get("lastModified").asLong());
+            panicHardStopBefore = project.get("panicHardStopBefore").asLong();
+
+            cueLists.clear();
+
+            for(JsonNode cueList : project.get("cueLists"))
+            {
+                CueList c = appendCueList(cueList.get("name").asText());
+                c.load(cueList);
+            }
+        }
+        catch (NullPointerException ex)
+        {
+            Log.fatal("Unable to read project (missing field) {}", ex);
+        }
+
+        Log.info("Project loaded successfully");
     }
 
     public CueList appendCueList(String name)
@@ -177,11 +211,42 @@ public class Project implements Iterable<CueList>
      *
      * @throws IllegalStateException if a project path has not yet been set
      */
-    public void save()
+    public void save() throws IOException
     {
         if (projectPath == null) throw new IllegalStateException("The project path has not been specified");
 
-        // TODO: Serialize project
+        File p = new File(projectPath);
+        new File(p.getParent()).mkdirs();
+
+        Log.info("Saving project '{}' to '{}'", name, projectPath);
+
+        lastModified = new Date();
+        ObjectMapper m = new ObjectMapper();
+        JsonFactory f = m.getFactory();
+
+        try(JsonGenerator writer = f.createGenerator(p, JsonEncoding.UTF8))
+        {
+            writer.useDefaultPrettyPrinter();
+
+            writer.writeStartObject();
+            {
+                writer.writeStringField("name", name);
+                writer.writeNumberField("lastModified", lastModified.getTime());
+                writer.writeNumberField("panicHardStopBefore", panicHardStopBefore);
+
+                writer.writeArrayFieldStart("cueLists");
+                {
+                    for(CueList c : this)
+                    {
+                        c.serialize(writer);
+                    }
+                }
+                writer.writeEndArray();
+            }
+            writer.writeEndObject();
+        }
+
+        Log.info("Project saved");
     }
 
     @Override

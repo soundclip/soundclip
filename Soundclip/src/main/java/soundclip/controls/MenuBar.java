@@ -20,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import me.nlowe.fxheaderbar.FXHeaderBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +30,11 @@ import soundclip.core.CueNumber;
 import soundclip.core.Project;
 import soundclip.dialogs.AboutDialog;
 import soundclip.dialogs.AudioCueEditorDialog;
+import soundclip.dialogs.ExceptionDialog;
 import soundclip.dialogs.NoteCueEditorDialog;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
@@ -50,16 +54,20 @@ public class MenuBar extends FXHeaderBar
     public MenuBar(){
         FXMLLoader fxmlLoader = Utils.load(this, "ui/controls/MenuBar.fxml");
 
-        Project p = Soundclip.Instance().getCurrentProject();
+        init(Soundclip.Instance().getCurrentProject());
+        Soundclip.Instance().onProjectChanged.whenTriggered(this::init);
 
+        initAddItems(addItem.getItems());
+        useLightIcons();
+    }
+
+    private void init(Project p)
+    {
         setTitle(p.getName());
         p.onRenamed.whenTriggered(this::setTitle);
 
         setSubtitle(p.getPath() == null ? "Not Saved" : p.getPath());
         p.onPathSet.whenTriggered(this::setSubtitle);
-
-        initAddItems(addItem.getItems());
-        useLightIcons();
     }
 
     private void initAddItems(ObservableList<MenuItem> i)
@@ -92,7 +100,28 @@ public class MenuBar extends FXHeaderBar
             Log.debug("TODO: Save currently open project");
         }
 
-        Log.debug("TODO: Show file chooser for open project");
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("SoundClip Projects", "*.scproj")
+        );
+        fc.setTitle("Open Project");
+        File result = fc.showOpenDialog(getScene().getWindow());
+
+        if(result != null)
+        {
+            try
+            {
+                Soundclip.Instance().setCurrentProject(new Project(result.getAbsolutePath()));
+            }
+            catch (IOException e)
+            {
+                Log.error("Unable to load project: ", e);
+                ExceptionDialog d = new ExceptionDialog(e);
+                d.setTitle("Exception");
+                d.setHeaderText("Unable to Open Project");
+                d.setContentText("SoundClip was unable to open the project because an exception was thrown");
+            }
+        }
     }
 
     @FXML
@@ -102,10 +131,32 @@ public class MenuBar extends FXHeaderBar
 
         if(p.getPath() == null)
         {
-            Log.debug("TODO: Show save dialog");
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("SoundClip Projects", "*.scproj")
+            );
+            fc.setTitle("Save Project As");
+            File result = fc.showSaveDialog(getScene().getWindow());
+
+            if (result == null) return;
+
+            String path = result.getAbsolutePath();
+            if(!path.endsWith(".scproj")) path += ".scproj";
+            p.setPath(path);
         }
 
-        Log.debug("TODO: Save project");
+        try
+        {
+            p.save();
+        }
+        catch (IOException e)
+        {
+            Log.error("Unable to save project: {}", e);
+            ExceptionDialog d = new ExceptionDialog(e);
+            d.setTitle("Exception");
+            d.setHeaderText("Unable to save project");
+            d.setContentText("SoundClip was unable to save the project because an exception was thrown.");
+        }
     }
 
     @FXML

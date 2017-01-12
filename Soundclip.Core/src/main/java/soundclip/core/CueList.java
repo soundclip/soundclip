@@ -14,6 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -21,8 +23,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
+import soundclip.core.cues.impl.FXAudioCue;
+import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -202,5 +207,57 @@ public class CueList implements Iterable<ICue>
     public Iterator<ICue> iterator()
     {
         return cues.iterator();
+    }
+
+    void load(JsonNode cueList)
+    {
+        Log.debug("Loading CueList {}", name);
+
+        // name is initialized by the project
+        for(JsonNode cue : cueList.get("cues"))
+        {
+            CueNumber number = new CueNumber(cue.get("number").asText());
+            String typeName = cue.get("type").asText();
+            ICue c;
+
+            Log.debug("\tLoading Cue {} ({})", number, typeName);
+
+            if(typeName.equals(FXAudioCue.class.getCanonicalName()))
+            {
+                c = new FXAudioCue(number);
+                c.load(cue);
+            }
+            else if(typeName.equals(NoteCue.class.getCanonicalName()))
+            {
+                c = new NoteCue(number);
+                c.load(cue);
+            }
+            else
+            {
+                Log.warn("Unable to load cue of type {} (Unknown cue type)", typeName);
+                continue;
+            }
+
+            add(c);
+        }
+    }
+
+    void serialize(JsonGenerator w) throws IOException
+    {
+        Log.debug("Writing cue list '{}'", name);
+        w.writeStartObject();
+        {
+            w.writeStringField("name", name);
+            w.writeArrayFieldStart("cues");
+            {
+                for(ICue c : this)
+                {
+                    Log.debug("\tWriting cue {} - {}", c.getNumber(), c.getName());
+                    c.serialize(w);
+                }
+            }
+            w.writeEndArray();
+        }
+        w.writeEndObject();
     }
 }

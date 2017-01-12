@@ -42,6 +42,14 @@ public class MainWindow extends BorderPane
 
         Project project = Soundclip.Instance().getCurrentProject();
 
+        init(project);
+        Soundclip.Instance().onProjectChanged.whenTriggered(this::init);
+    }
+
+    private void init(Project project)
+    {
+        cueStackContainer.getTabs().clear();
+
         project.onCueListAdded.whenTriggered((list) ->
         {
             cueStackContainer.getTabs().add(new CueListView(list));
@@ -50,9 +58,9 @@ public class MainWindow extends BorderPane
 
         project.onCueListRemoved.whenTriggered((list) ->
         {
-           Tab toRemove = cueStackContainer.getTabs().stream().filter((tab) -> ((CueListView)tab).getModel() == list).findFirst().orElse(null);
+            Tab toRemove = cueStackContainer.getTabs().stream().filter((tab) -> ((CueListView)tab).getModel() == list).findFirst().orElse(null);
 
-           if(toRemove != null)
+            if(toRemove != null)
             {
                 cueStackContainer.getTabs().remove(toRemove);
                 syncHeaderVisibility();

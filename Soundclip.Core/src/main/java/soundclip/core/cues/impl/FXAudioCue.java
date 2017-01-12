@@ -14,6 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core.cues.impl;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -28,6 +30,7 @@ import soundclip.core.CueSupportFlags;
 import soundclip.core.cues.IAudioCue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -208,6 +211,43 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
             fadeTimeline.stop();
             backend.setVolume(1.0);
         }
+    }
+
+    @Override
+    public void load(JsonNode cue)
+    {
+        // Cue Number is set by the cue list deserializer
+
+        name = cue.get("name").asText();
+        notes = cue.get("notes").asText();
+
+        fadeInDuration = Duration.millis(cue.get("fadeInDuration").asDouble());
+        fadeOutDuration = Duration.millis(cue.get("fadeOutDuration").asDouble());
+        pan = cue.get("pan").asDouble();
+        pitch = cue.get("pitch").asDouble();
+
+        setSource(cue.get("source").asText());
+    }
+
+    @Override
+    public void serialize(JsonGenerator w) throws IOException
+    {
+        w.writeStartObject();
+        {
+            // include the type so the cue list deserializer can load the right cue
+            w.writeStringField("type", getClass().getCanonicalName());
+            w.writeStringField("name", name);
+            w.writeStringField("number", number.toString());
+            w.writeStringField("notes", notes);
+
+            w.writeNumberField("fadeInDuration", fadeInDuration.toMillis());
+            w.writeNumberField("fadeOutDuration", fadeOutDuration.toMillis());
+            w.writeNumberField("pan", pan);
+            w.writeNumberField("pitch", pitch);
+
+            w.writeStringField("source", source);
+        }
+        w.writeEndObject();
     }
 
     @Override

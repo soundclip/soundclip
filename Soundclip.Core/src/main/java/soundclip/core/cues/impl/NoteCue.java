@@ -14,12 +14,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core.cues.impl;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Duration;
 import soundclip.core.CueNumber;
 import soundclip.core.cues.ICue;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -123,6 +126,29 @@ public class NoteCue implements ICue
 
     @Override
     public void stop() {}
+
+    @Override
+    public void load(JsonNode cue)
+    {
+        // Cue Number is set by the cue list deserializer
+
+        name = cue.get("name").asText();
+        notes = cue.get("notes").asText();
+    }
+
+    @Override
+    public void serialize(JsonGenerator w) throws IOException
+    {
+        w.writeStartObject();
+        {
+            // include the type so the cue list deserializer can load the right cue
+            w.writeStringField("type", getClass().getCanonicalName());
+            w.writeStringField("name", name);
+            w.writeStringField("number", number.toString());
+            w.writeStringField("notes", notes);
+        }
+        w.writeEndObject();
+    }
 
     @Override
     public ReadOnlyObjectProperty<Duration> preWaitProgressProperty()

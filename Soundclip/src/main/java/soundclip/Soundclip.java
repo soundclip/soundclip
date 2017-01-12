@@ -28,6 +28,7 @@ import soundclip.controllers.MainWindow;
 import soundclip.controls.CueListView;
 import soundclip.core.CueList;
 import soundclip.core.Project;
+import soundclip.core.interop.Signal;
 import soundclip.osc.OSCServer;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class Soundclip extends Application
 
     private MainWindow primaryController;
 
+    public final Signal<Project> onProjectChanged = new Signal<>();
     private Project currentProject;
     private OSCServer oscServer;
 
@@ -154,5 +156,7 @@ public class Soundclip extends Application
         {
             log.fatal("Unable to start OSC Server", e);
         }
+
+        onProjectChanged.post(this.currentProject);
     }
 }

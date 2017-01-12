@@ -26,7 +26,6 @@ import soundclip.core.cues.ICue;
  */
 public class NotesPane extends GridPane
 {
-
     @FXML private TextArea previousNotes;
     @FXML private TextArea currentNotes;
     @FXML private TextArea onDeckNotes;

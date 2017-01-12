@@ -1,9 +1,12 @@
 package soundclip.core.cues;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
 import javafx.util.Duration;
 import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -52,4 +55,10 @@ public interface ICue extends  IProgressProvider
 
     /** Stops the cue and resets the playback state */
     void stop();
+
+    /** Initialize the cue from the specified json node */
+    void load(JsonNode cue);
+
+    /** Serialize the cue to the specified Json Generator */
+    void serialize(JsonGenerator writer) throws IOException;
 }

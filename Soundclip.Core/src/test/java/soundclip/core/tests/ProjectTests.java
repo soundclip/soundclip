@@ -189,7 +189,7 @@ public class ProjectTests
     }
 
     @Test
-    public void canSaveProject()
+    public void canSaveProject() throws IOException
     {
         Project p = new Project();
 
