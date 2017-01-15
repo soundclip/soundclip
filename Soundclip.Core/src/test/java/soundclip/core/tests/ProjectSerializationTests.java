@@ -128,11 +128,16 @@ public class ProjectSerializationTests
     {
         Project p = new Project();
 
-        File tempProjectPath = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString()).toFile();
+        File tempProjectPath = Paths.get(System.getProperty("java.io.tmpdir"), "soundclip-"+UUID.randomUUID().toString()).toFile();
         tempProjectPath.deleteOnExit();
 
         if(!tempProjectPath.exists()) tempProjectPath.mkdirs();
         File tempProject = new File(tempProjectPath, "test.scproj");
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            tempProject.delete();
+            tempProjectPath.delete();
+        }));
 
         p.setPath(tempProject.getPath());
         p.save();
