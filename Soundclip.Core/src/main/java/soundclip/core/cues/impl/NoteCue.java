@@ -28,61 +28,21 @@ import java.util.List;
 /**
  * A simple note cue. This cue does nothing other than hold notes / a description
  */
-public class NoteCue implements ICue
+public class NoteCue extends CueBase
 {
-    private CueNumber number;
-    private String name;
-    private String notes;
 
     public NoteCue(CueNumber number)
     {
-        this.number = number;
-        name = "Untitled Notes Cue";
-        notes = "";
+        setNumber(number);
+        setName("Untitled Notes Cue");
     }
 
     public NoteCue(CueNumber number, String name, String notes)
     {
         this(number);
 
-        this.name = name;
-        this.notes = notes;
-    }
-
-    @Override
-    public CueNumber getNumber()
-    {
-        return number;
-    }
-
-    @Override
-    public void setNumber(CueNumber number)
-    {
-        this.number = number;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    @Override
-    public String getNotes()
-    {
-        return notes;
-    }
-
-    @Override
-    public void setNotes(String notes)
-    {
-        this.notes = notes;
+        setName(name);
+        setNotes(notes);
     }
 
     @Override
@@ -90,18 +50,6 @@ public class NoteCue implements ICue
     {
         return Duration.ZERO;
     }
-
-    @Override
-    public javafx.util.Duration getPreWaitDelay() { return Duration.ZERO; }
-
-    @Override
-    public void setPreWaitDelay(javafx.util.Duration delay) {}
-
-    @Override
-    public javafx.util.Duration getPostWaitDelay() { return Duration.ZERO; }
-
-    @Override
-    public void setPostWaitDelay(javafx.util.Duration delay) {}
 
     @Override
     public int getSupportedOperations()
@@ -119,21 +67,13 @@ public class NoteCue implements ICue
     public void go() {}
 
     @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
     public void stop() {}
 
     @Override
     public void load(JsonNode cue)
     {
         // Cue Number is set by the cue list deserializer
-
-        name = cue.get("name").asText();
-        notes = cue.get("notes").asText();
+        deserializeCommonFields(cue);
     }
 
     @Override
@@ -143,9 +83,7 @@ public class NoteCue implements ICue
         {
             // include the type so the cue list deserializer can load the right cue
             w.writeStringField("type", getClass().getCanonicalName());
-            w.writeStringField("name", name);
-            w.writeStringField("number", number.toString());
-            w.writeStringField("notes", notes);
+            serializeCommonFields(w);
         }
         w.writeEndObject();
     }

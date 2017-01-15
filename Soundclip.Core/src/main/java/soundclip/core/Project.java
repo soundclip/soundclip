@@ -27,6 +27,12 @@ import soundclip.core.interop.Signal;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -41,7 +47,7 @@ public class Project implements Iterable<CueList>
 
     private String projectPath;
     private String name;
-    private Date lastModified = new Date(0);
+    private ZonedDateTime lastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.of("UTC"));
     private boolean dirty;
 
     private long panicHardStopBefore = 3 * 1000;
@@ -96,7 +102,7 @@ public class Project implements Iterable<CueList>
         try
         {
             name = project.get("name").asText();
-            lastModified = new Date(project.get("lastModified").asLong());
+            lastModified = ZonedDateTime.parse(project.get("lastModified").asText());
             panicHardStopBefore = project.get("panicHardStopBefore").asLong();
 
             cueLists.clear();
@@ -109,7 +115,8 @@ public class Project implements Iterable<CueList>
         }
         catch (NullPointerException ex)
         {
-            Log.fatal("Unable to read project (missing field) {}", ex);
+            Log.fatal("Unable to read project (missing field)", ex);
+            throw new IllegalArgumentException("The specified project is missing required fields", ex);
         }
 
         Log.info("Project loaded successfully");
@@ -174,7 +181,7 @@ public class Project implements Iterable<CueList>
     }
 
     /** @return The last date and time the project was modified */
-    public Date getLastModified()
+    public ZonedDateTime getLastModified()
     {
         return lastModified;
     }
@@ -220,7 +227,7 @@ public class Project implements Iterable<CueList>
 
         Log.info("Saving project '{}' to '{}'", name, projectPath);
 
-        lastModified = new Date();
+        lastModified = ZonedDateTime.now();
         ObjectMapper m = new ObjectMapper();
         JsonFactory f = m.getFactory();
 
@@ -231,7 +238,7 @@ public class Project implements Iterable<CueList>
             writer.writeStartObject();
             {
                 writer.writeStringField("name", name);
-                writer.writeNumberField("lastModified", lastModified.getTime());
+                writer.writeStringField("lastModified", lastModified.format(DateTimeFormatter.ISO_INSTANT));
                 writer.writeNumberField("panicHardStopBefore", panicHardStopBefore);
 
                 writer.writeArrayFieldStart("cueLists");

@@ -40,11 +40,8 @@ import java.util.List;
  * Supports any audio formats supported by the implementation of
  * {@link javafx.scene.media.MediaPlayer} on your system.
  */
-public class FXAudioCue implements IAudioCue, AutoCloseable
+public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 {
-    private CueNumber number;
-    private String name;
-    private String notes;
     private Duration fadeInDuration;
     private Duration fadeOutDuration;
     private double pitch;
@@ -56,83 +53,21 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     private SimpleObjectProperty<Duration> progressPropertyWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
 
     private Timeline fadeTimeline;
-    private Duration preWaitDelay;
-    private Duration postWaitDelay;
 
     public FXAudioCue(CueNumber number)
     {
-        this.number = number;
-        name = "Untitled Audio Cue";
+        setNumber(number);
+        setName("Untitled Audio Cue");
         fadeInDuration = Duration.ZERO;
         fadeOutDuration = Duration.ZERO;
-        preWaitDelay = Duration.ZERO;
-        postWaitDelay = Duration.ZERO;
-    }
-
-    @Override
-    public CueNumber getNumber()
-    {
-        return number;
-    }
-
-    @Override
-    public void setNumber(CueNumber number)
-    {
-        this.number = number;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    @Override
-    public String getNotes()
-    {
-        return notes;
-    }
-
-    @Override
-    public void setNotes(String notes)
-    {
-        this.notes = notes;
+        setPreWaitDelay(Duration.ZERO);
+        setPostWaitDelay(Duration.ZERO);
     }
 
     @Override
     public Duration getDuration()
     {
         return backendSource == null || backend == null ? Duration.ZERO : backend.getTotalDuration();
-    }
-
-    @Override
-    public Duration getPreWaitDelay()
-    {
-        return preWaitDelay;
-    }
-
-    @Override
-    public void setPreWaitDelay(Duration delay)
-    {
-        preWaitDelay = delay;
-    }
-
-    @Override
-    public Duration getPostWaitDelay()
-    {
-        return postWaitDelay;
-    }
-
-    @Override
-    public void setPostWaitDelay(Duration delay)
-    {
-        postWaitDelay = delay;
     }
 
     @Override
@@ -205,7 +140,11 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     @Override
     public void stop()
     {
-        if(backend != null) backend.stop();
+        if(backend != null)
+        {
+            backend.seek(backend.getStartTime());
+            backend.stop();
+        }
         if(fadeTimeline != null)
         {
             fadeTimeline.stop();
@@ -217,9 +156,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
     public void load(JsonNode cue)
     {
         // Cue Number is set by the cue list deserializer
-
-        name = cue.get("name").asText();
-        notes = cue.get("notes").asText();
+        deserializeCommonFields(cue);
 
         fadeInDuration = Duration.millis(cue.get("fadeInDuration").asDouble());
         fadeOutDuration = Duration.millis(cue.get("fadeOutDuration").asDouble());
@@ -236,9 +173,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
         {
             // include the type so the cue list deserializer can load the right cue
             w.writeStringField("type", getClass().getCanonicalName());
-            w.writeStringField("name", name);
-            w.writeStringField("number", number.toString());
-            w.writeStringField("notes", notes);
+            serializeCommonFields(w);
 
             w.writeNumberField("fadeInDuration", fadeInDuration.toMillis());
             w.writeNumberField("fadeOutDuration", fadeOutDuration.toMillis());
@@ -333,6 +268,7 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
         fadeTimeline.setOnFinished(e ->
         {
             backend.stop();
+            backend.seek(backend.getStartTime());
 
             // TODO: Restore volume to configured volume
             backend.setVolume(1.0);
@@ -380,6 +316,10 @@ public class FXAudioCue implements IAudioCue, AutoCloseable
 
         backend.setOnReady(() -> {
             progressPropertyWrapper.bind(backend.currentTimeProperty());
+        });
+        backend.setOnEndOfMedia(() -> {
+            backend.stop();
+            backend.seek(backend.getStartTime());
         });
     }
 

@@ -38,17 +38,6 @@ import static org.mockito.Mockito.when;
 public class ProjectTests
 {
     @Test
-    public void canLoadProjectFromDisk() throws IOException
-    {
-        Project p = new Project(getClass().getClassLoader().getResource("SampleProject/Sample.scproj").getPath());
-
-        assertThat(p, is(not(nullValue())));
-
-        // TODO: Validate deserialization when we actually write the serialization / deserialization code
-        assertThat(p.getLastModified(), is(nullValue()));
-    }
-
-    @Test
     public void canAddCueList()
     {
         Project p = new Project();
@@ -169,40 +158,6 @@ public class ProjectTests
         c.add(cueC3);
 
         assertThat(p.getCueCount(), is(equalTo(6)));
-    }
-
-    @Test
-    public void saveProjectThrowsWhenPathNotSet()
-    {
-        Project p = new Project();
-
-        try
-        {
-            p.save();
-            fail();
-        }
-        catch(Exception ex)
-        {
-            assertThat(ex, is(instanceOf(IllegalStateException.class)));
-            assertThat(ex.getMessage(), is(equalTo("The project path has not been specified")));
-        }
-    }
-
-    @Test
-    public void canSaveProject() throws IOException
-    {
-        Project p = new Project();
-
-        File tempProjectPath = Paths.get(System.getProperty("java.io.tempdir"), UUID.randomUUID().toString()).toFile();
-        tempProjectPath.deleteOnExit();
-
-        if(!tempProjectPath.exists()) tempProjectPath.mkdirs();
-        File tempProject = new File(tempProjectPath, "test.scproj");
-
-        p.setPath(tempProject.getPath());
-        p.save();
-
-        // TODO: Verify the project saved correctly when we actually implement serialization / deserialization
     }
 
     @Test
