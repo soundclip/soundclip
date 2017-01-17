@@ -105,6 +105,13 @@ public class MenuBar extends FXHeaderBar
             new FileChooser.ExtensionFilter("SoundClip Projects", "*.scproj")
         );
         fc.setTitle("Open Project");
+
+        String lastDir = Soundclip.Instance().getGlobalSettings().getLastFileChooserDirectory();
+        if(lastDir != null && !lastDir.isEmpty())
+        {
+            fc.setInitialDirectory(new File(lastDir));
+        }
+
         File result = fc.showOpenDialog(getScene().getWindow());
 
         if(result != null)
@@ -136,6 +143,13 @@ public class MenuBar extends FXHeaderBar
                     new FileChooser.ExtensionFilter("SoundClip Projects", "*.scproj")
             );
             fc.setTitle("Save Project As");
+
+            String lastDir = Soundclip.Instance().getGlobalSettings().getLastFileChooserDirectory();
+            if(lastDir != null && !lastDir.isEmpty())
+            {
+                fc.setInitialDirectory(new File(lastDir));
+            }
+
             File result = fc.showSaveDialog(getScene().getWindow());
 
             if (result == null) return;

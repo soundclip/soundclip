@@ -78,7 +78,7 @@ public class CueList implements Iterable<ICue>
     public void panic(boolean hard)
     {
         Log.debug("PANIC! {} (in list {})", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully", name);
-        cues.parallelStream().forEach((cue) ->
+        cues.forEach((cue) ->
         {
             if(hard || !(cue instanceof IFadeableCue))
             {

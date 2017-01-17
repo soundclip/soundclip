@@ -48,6 +48,7 @@ public class Soundclip extends Application
     private MainWindow primaryController;
 
     public final Signal<Project> onProjectChanged = new Signal<>();
+    private final Settings globalSettings = new Settings();
     private Project currentProject;
     private OSCServer oscServer;
 
@@ -64,8 +65,14 @@ public class Soundclip extends Application
 
         log.info("Starting Up " + VERSION.toString());
 
-        // TODO: Load last project
-        setCurrentProject(new Project());
+        if(!globalSettings.getLastOpenProjectPath().isEmpty())
+        {
+            setCurrentProject(new Project(globalSettings.getLastOpenProjectPath()));
+        }
+        else
+        {
+            setCurrentProject(new Project());
+        }
 
         primaryController = new MainWindow();
 
@@ -146,6 +153,10 @@ public class Soundclip extends Application
         }
 
         this.currentProject = currentProject;
+        if(this.currentProject.getPath() != null && !this.currentProject.getPath().isEmpty())
+        {
+            globalSettings.setLastOpenProjectPath(this.currentProject.getPath());
+        }
 
         try
         {
@@ -158,5 +169,10 @@ public class Soundclip extends Application
         }
 
         onProjectChanged.post(this.currentProject);
+    }
+
+    public Settings getGlobalSettings()
+    {
+        return globalSettings;
     }
 }

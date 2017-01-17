@@ -99,6 +99,12 @@ public class AudioCueEditorDialog extends BorderPane
         );
         fc.setTitle("Select Audio File");
 
+        String lastDir = Soundclip.Instance().getGlobalSettings().getLastFileChooserDirectory();
+        if(lastDir != null && !lastDir.isEmpty())
+        {
+            fc.setInitialDirectory(new File(lastDir));
+        }
+
         File result = fc.showOpenDialog(dialog);
         if(result != null)
         {

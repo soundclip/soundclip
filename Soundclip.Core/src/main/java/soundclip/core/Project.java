@@ -210,7 +210,7 @@ public class Project implements Iterable<CueList>
     public void panic(boolean hard)
     {
         Log.warn("PANIC! {}", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully");
-        cueLists.parallelStream().forEach((list) -> list.panic(hard));
+        cueLists.forEach((list) -> list.panic(hard));
     }
 
     /**
