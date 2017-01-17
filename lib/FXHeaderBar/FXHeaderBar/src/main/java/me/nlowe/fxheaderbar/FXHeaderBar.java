@@ -15,6 +15,7 @@
 package me.nlowe.fxheaderbar;
 
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
@@ -57,13 +58,12 @@ public class FXHeaderBar extends ToolBar
     private final BooleanProperty showWindowControls = new SimpleBooleanProperty(true);
     private final BooleanProperty showMinimizeButton = new SimpleBooleanProperty(true);
     private final BooleanProperty useLightIconsProp = new SimpleBooleanProperty(false);
+    private final BooleanProperty useFullScreenInsteadOfMaximize = new SimpleBooleanProperty(true);
 
     private final Button maximizeButton = new Button();
 
     private Point2D dragOffset = null;
     private double windowWidthBeforeFullscreen = 0;
-
-    private UndecoratedStageMouseHandler undecoratedStageMouseHandler;
 
     public FXHeaderBar()
     {
@@ -116,10 +116,7 @@ public class FXHeaderBar extends ToolBar
 
         maximizeButton.setId("fxheaderbar-windowctl-maximize");
         maximizeButton.getStyleClass().addAll("maximize", "window-control");
-        maximizeButton.setOnAction((e) -> {
-            Stage w = (Stage)getScene().getWindow();
-            w.setFullScreen(!w.isFullScreen());
-        });
+        maximizeButton.setOnAction((e) -> toggleMaximize());
 
         Button closeButton = new Button();
         closeButton.setId("fxheaderbar-windowctl-close");
@@ -152,9 +149,9 @@ public class FXHeaderBar extends ToolBar
         setOnMouseDragged((e) -> {
             Stage w = (Stage)getScene().getWindow();
 
-            if(w.isFullScreen())
+            if(isTechnicallyMaximized())
             {
-                w.setFullScreen(false);
+                setMaximizedImpl(false);
                 dragOffset = new Point2D((windowWidthBeforeFullscreen * dragOffset.getX()) / w.getWidth(), dragOffset.getY());
             }
 
@@ -164,8 +161,7 @@ public class FXHeaderBar extends ToolBar
         setOnMouseClicked((e) -> {
             if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY)
             {
-                Stage w = (Stage)getScene().getWindow();
-                w.setFullScreen(!w.isFullScreen());
+                toggleMaximize();
             }
         });
 
@@ -185,6 +181,48 @@ public class FXHeaderBar extends ToolBar
         });
 
         getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+    }
+
+    private boolean isTechnicallyMaximized()
+    {
+        Stage w = (Stage)getScene().getWindow();
+
+        if(useFullScreenInsteadOfMaximize.getValue())
+        {
+            return w.isFullScreen();
+        }
+        else
+        {
+            return w.isMaximized();
+        }
+    }
+
+    private void setMaximizedImpl(boolean value)
+    {
+        Stage w = (Stage)getScene().getWindow();
+
+        if(useFullScreenInsteadOfMaximize.getValue())
+        {
+            w.setFullScreen(value);
+        }
+        else
+        {
+            w.setMaximized(value);
+        }
+    }
+
+    private void toggleMaximize()
+    {
+        Stage w = (Stage)getScene().getWindow();
+
+        if(useFullScreenInsteadOfMaximize.getValue())
+        {
+            w.setFullScreen(!w.isFullScreen());
+        }
+        else
+        {
+            w.setMaximized(!w.isMaximized());
+        }
     }
 
     public FXHeaderBar(String title)
@@ -214,16 +252,20 @@ public class FXHeaderBar extends ToolBar
     public void syncToStage(Stage w)
     {
         w.titleProperty().bindBidirectional(title);
-        w.fullScreenProperty().addListener((prop, oldValue, newValue) -> {
+
+        ChangeListener<Boolean> maximizeListener = (prop, oldValue, newValue) -> {
             maximizeButton.getStyleClass().removeAll("maximize", "restore");
             maximizeButton.getStyleClass().add(newValue ? "restore" : "maximize");
             if(newValue) windowWidthBeforeFullscreen = w.getWidth();
-        });
+        };
+
+        w.fullScreenProperty().addListener(maximizeListener);
+        w.maximizedProperty().addListener(maximizeListener);
 
         w.setFullScreenExitHint("");
         if(w.getStyle() == StageStyle.UNDECORATED)
         {
-            undecoratedStageMouseHandler = new UndecoratedStageMouseHandler(w, this, 4);
+            UndecoratedStageMouseHandler undecoratedStageMouseHandler = new UndecoratedStageMouseHandler(w, this, 4);
         }
     }
 
@@ -340,5 +382,20 @@ public class FXHeaderBar extends ToolBar
     public void useLightIcons()
     {
         useLightIcons(true);
+    }
+
+    public boolean usingFullScreenInsteadOfMaximize()
+    {
+        return useFullScreenInsteadOfMaximize.get();
+    }
+
+    public BooleanProperty useFullScreenInsteadOfMaximizeProperty()
+    {
+        return useFullScreenInsteadOfMaximize;
+    }
+
+    public void shouldUseFullscreenInsteadOfMaximize(boolean v)
+    {
+        useFullScreenInsteadOfMaximize.setValue(v);
     }
 }
