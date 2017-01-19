@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controls;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -266,6 +267,14 @@ public class MenuBar extends FXHeaderBar
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> Soundclip.Instance().getActiveCueList().ifPresent(c -> c.setName(name)));
+    }
+
+    @FXML
+    protected void onCloseProject(ActionEvent event)
+    {
+        Platform.runLater(() -> {
+            Soundclip.Instance().returnToWelcomeScreen();
+        });
     }
 
     @FXML

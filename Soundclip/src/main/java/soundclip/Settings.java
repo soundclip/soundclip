@@ -21,9 +21,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import soundclip.core.Project;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Global Application Settings
@@ -36,6 +40,7 @@ public class Settings
 
     private String lastOpenProjectPath = "";
     private String lastFileChooserDirectory = "";
+    private final HashMap<String,String> recentProjects = new HashMap<>();
 
     public Settings()
     {
@@ -48,6 +53,15 @@ public class Settings
 
                 lastOpenProjectPath = globalSettings.get("lastOpenProjectPath").asText("");
                 lastFileChooserDirectory = globalSettings.get("lastFileChooserDirectory").asText("");
+
+                JsonNode projects = globalSettings.get("recentProjects");
+                if(projects != null)
+                {
+                    for(JsonNode recentProject : projects)
+                    {
+                        recentProjects.put(recentProject.get("path").asText(), recentProject.get("name").asText());
+                    }
+                }
             }
             catch (IOException e)
             {
@@ -77,6 +91,19 @@ public class Settings
             {
                 writer.writeStringField("lastOpenProjectPath", lastOpenProjectPath);
                 writer.writeStringField("lastFileChooserDirectory", lastFileChooserDirectory);
+                writer.writeArrayFieldStart("recentProjects");
+                {
+                    for(Map.Entry<String,String> p : recentProjects.entrySet())
+                    {
+                        writer.writeStartObject();
+                        {
+                            writer.writeStringField("path", p.getKey());
+                            writer.writeStringField("name", p.getValue());
+                        }
+                        writer.writeEndObject();
+                    }
+                }
+                writer.writeEndArray();
             }
             writer.writeEndObject();
         }
@@ -105,6 +132,22 @@ public class Settings
     public void setLastFileChooserDirectory(String lastFileChooserDirectory)
     {
         this.lastFileChooserDirectory = lastFileChooserDirectory;
+        saveSettings();
+    }
+
+    public Map<String, String> getRecentProjects()
+    {
+        return Collections.unmodifiableMap(recentProjects);
+    }
+
+    public void addRecentProject(Project p)
+    {
+        recentProjects.put(p.getPath(), p.getName());
+    }
+
+    public void removeRecentProject(String key)
+    {
+        recentProjects.remove(key);
         saveSettings();
     }
 }

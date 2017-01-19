@@ -1,0 +1,12 @@
+#projectName {
+    -fx-font-weight: bold;
+    -fx-text-overrun: ellipsis;
+}
+
+#projectPath {
+    -fx-text-overrun: leading-ellipsis;
+}
+
+#removeIcon {
+    -fx-cursor: hand;
+}

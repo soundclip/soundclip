@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * A named, ordered, collection of cues
  */
-public class CueList implements Iterable<ICue>
+public class CueList implements Iterable<ICue>, AutoCloseable
 {
     private static Logger Log = LogManager.getLogger(CueList.class);
 
@@ -259,5 +259,17 @@ public class CueList implements Iterable<ICue>
             w.writeEndArray();
         }
         w.writeEndObject();
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        for(ICue c : this)
+        {
+            if(c instanceof AutoCloseable)
+            {
+                ((AutoCloseable)c).close();
+            }
+        }
     }
 }

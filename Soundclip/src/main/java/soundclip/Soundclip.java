@@ -29,6 +29,7 @@ import soundclip.controls.CueListView;
 import soundclip.core.CueList;
 import soundclip.core.Project;
 import soundclip.core.interop.Signal;
+import soundclip.dialogs.WelcomeWindow;
 import soundclip.osc.OSCServer;
 
 import java.io.IOException;
@@ -62,32 +63,61 @@ public class Soundclip extends Application
     {
         singleton = this;
         primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.setTitle("soundclip");
+        primaryStage.getIcons().addAll(
+            new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_512x512.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_256x256.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_128x128.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_64x64.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_48x48.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_32x32.png"))
+        );
 
         log.info("Starting Up " + VERSION.toString());
 
-        if(!globalSettings.getLastOpenProjectPath().isEmpty())
+        Project initialProject = null;
+
+        if(globalSettings.getLastOpenProjectPath().isEmpty())
         {
-            setCurrentProject(new Project(globalSettings.getLastOpenProjectPath()));
+            initialProject = new WelcomeWindow().present();
         }
         else
         {
-            setCurrentProject(new Project());
+            initialProject = new Project(globalSettings.getLastOpenProjectPath());
         }
 
-        primaryController = new MainWindow();
+        if(initialProject == null)
+        {
+            primaryStage.close();
+        }
+        else
+        {
+            setCurrentProject(initialProject);
+            primaryController = new MainWindow();
+            primaryStage.setScene(new Scene(primaryController, 800, 600));
+            primaryController.getMenuBar().syncToStage(primaryStage);
 
-        primaryStage.setTitle("soundclip");
-        primaryStage.getIcons().addAll(
-                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_512x512.png")),
-                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_256x256.png")),
-                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_128x128.png")),
-                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_64x64.png")),
-                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_48x48.png")),
-                new Image(getClass().getClassLoader().getResourceAsStream("img/icon/icon_32x32.png"))
-        );
-        primaryStage.setScene(new Scene(primaryController, 800, 600));
-        primaryController.getMenuBar().syncToStage(primaryStage);
-        primaryStage.show();
+            primaryStage.show();
+        }
+    }
+
+    public void returnToWelcomeScreen()
+    {
+        getGlobalSettings().setLastOpenProjectPath("");
+        primaryController.getScene().getWindow().hide();
+
+        closeCurrentProject();
+        Project p = new WelcomeWindow().present();
+
+        if(p != null)
+        {
+            setCurrentProject(p);
+            ((Stage)primaryController.getScene().getWindow()).show();
+        }
+        else
+        {
+            ((Stage)primaryController.getScene().getWindow()).close();
+        }
     }
 
     @Override
@@ -138,7 +168,7 @@ public class Soundclip extends Application
         return currentProject;
     }
 
-    public void setCurrentProject(Project currentProject)
+    private void closeCurrentProject()
     {
         if(oscServer != null)
         {
@@ -150,12 +180,33 @@ public class Soundclip extends Application
             {
                 log.fatal("Error shutting down OSC Server", e);
             }
+            oscServer = null;
         }
+
+        if(currentProject != null)
+        {
+            try
+            {
+                currentProject.close();
+            }
+            catch (Exception e)
+            {
+                log.fatal("Unable to close project", e);
+            }
+
+            currentProject = null;
+        }
+    }
+
+    public void setCurrentProject(Project currentProject)
+    {
+        closeCurrentProject();
 
         this.currentProject = currentProject;
         if(this.currentProject.getPath() != null && !this.currentProject.getPath().isEmpty())
         {
             globalSettings.setLastOpenProjectPath(this.currentProject.getPath());
+            globalSettings.addRecentProject(this.currentProject);
         }
 
         try

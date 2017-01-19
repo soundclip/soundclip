@@ -25,6 +25,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
 import soundclip.core.cues.IAudioCue;
@@ -42,6 +44,8 @@ import java.util.List;
  */
 public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 {
+    private static final Logger Log = LogManager.getLogger(FXAudioCue.class);
+
     private Duration fadeInDuration;
     private Duration fadeOutDuration;
     private double pitch;
@@ -304,12 +308,14 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 
         this.source = source;
 
-        if(backend != null)
+        try
         {
-            progressPropertyWrapper.unbind();
-            backend.stop();
+            close();
         }
-        backend = null;
+        catch (Exception e)
+        {
+            Log.warn("Failed to clean up previous backend", e);
+        }
 
         backendSource = new Media(new File(source).toURI().toString());
         backend = new MediaPlayer(backendSource);
@@ -332,8 +338,14 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     @Override
     public void close() throws Exception
     {
-        if(backend != null) backend.stop();
+        if(backend != null)
+        {
+            progressPropertyWrapper.unbind();
+            backend.stop();
+            backend.dispose();
+        }
         backend = null;
+        backendSource = null;
     }
 
     @Override

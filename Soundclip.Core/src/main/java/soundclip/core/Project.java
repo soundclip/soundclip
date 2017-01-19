@@ -41,7 +41,7 @@ import java.util.Iterator;
  * A project is the basic unit of work. Each project contains a collection of cue lists
  * and metadata for the project.
  */
-public class Project implements Iterable<CueList>
+public class Project implements Iterable<CueList>, AutoCloseable
 {
     private static Logger Log = LogManager.getLogger(Project.class);
 
@@ -265,5 +265,14 @@ public class Project implements Iterable<CueList>
     public boolean isDirty()
     {
         return dirty;
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        for(CueList list : this)
+        {
+            list.close();
+        }
     }
 }

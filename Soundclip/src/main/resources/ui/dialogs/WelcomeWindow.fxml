@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.Pane?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+         type="javafx.scene.layout.BorderPane" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+         stylesheets="/css/theme.css, /css/dialogs/WelcomeWindow.css">
+    <left>
+        <ListView fx:id="recentProjectList" />
+    </left>
+    <center>
+        <VBox alignment="CENTER">
+            <ImageView>
+                <Image url="/img/icon/icon_128x128.png"/>
+            </ImageView>
+            <Label fx:id="title" text="Soundclip" />
+            <HBox alignment="CENTER">
+                <Label text="Version "/>
+                <Label fx:id="versionLabel" />
+            </HBox>
+            <VBox alignment="CENTER">
+                <padding>
+                    <Insets top="50" />
+                </padding>
+                <HBox fx:id="newProject" styleClass="welcome-button">
+                    <ImageView>
+                        <Image url="/img/ic_insert_drive_file_white_24dp_1x.png" />
+                    </ImageView>
+                    <Pane HBox.hgrow="ALWAYS" />
+                    <Label text="Create New Project" />
+                </HBox>
+                <HBox fx:id="openProject" styleClass="welcome-button">
+                    <ImageView>
+                        <Image url="/img/ic_folder_open_white_24dp_1x.png" />
+                    </ImageView>
+                    <Pane HBox.hgrow="ALWAYS" />
+                    <Label text="Open Existing Project" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</fx:root>

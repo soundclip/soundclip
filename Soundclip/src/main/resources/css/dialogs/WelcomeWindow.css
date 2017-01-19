@@ -1,0 +1,36 @@
+@import '/css/material-color.css';
+
+#title {
+    -fx-font-size: 48px;
+}
+
+#recentProjectList {
+    -fx-min-width: 259px;
+    -fx-max-width: 259px;
+    -fx-pref-width: 259px;
+    -fx-background-color: md-grey-900;
+    -fx-background-insets: 0;
+}
+
+.welcome-button {
+    -fx-min-width: 300px;
+    -fx-max-width: 300px;
+    -fx-pref-width: 300px;
+    -fx-padding: 10px;
+}
+
+#newProject:hover,
+#openProject:hover {
+    -fx-background-color: md-grey-700;
+    -fx-cursor: hand;
+}
+
+.list-cell:even,
+.list-cell:odd {
+    -fx-background-color: md-grey-850;
+}
+
+.list-cell:selected,
+.list-cell:filled:hover {
+    -fx-background-color: md-indigo-A400;
+}
