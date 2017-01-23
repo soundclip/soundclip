@@ -3,7 +3,7 @@ package soundclip.core.cues;
 /**
  * A wrapper interface for Audio Cues
  */
-public interface IAudioCue extends IFadeableCue, ISeekableCue, IPitchableCue, IPannableCue
+public interface IAudioCue extends IFadeableCue, ISeekableCue, IPitchableCue, IPannableCue, IProjectPathConsumer
 {
     /** @return The source audio file to be played */
     String getSource();

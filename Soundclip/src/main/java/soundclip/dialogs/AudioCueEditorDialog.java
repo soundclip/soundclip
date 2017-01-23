@@ -60,6 +60,7 @@ public class AudioCueEditorDialog extends BorderPane
     public AudioCueEditorDialog(CueNumber nextNumber)
     {
         this(new FXAudioCue(nextNumber));
+        model.consumeProjectPath(Soundclip.Instance().getCurrentProject().getProjectLocation());
         isNewCue = true;
     }
 

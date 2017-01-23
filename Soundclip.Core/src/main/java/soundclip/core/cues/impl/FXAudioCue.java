@@ -57,6 +57,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     private SimpleObjectProperty<Duration> progressPropertyWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
 
     private Timeline fadeTimeline;
+    private String projectPath = null;
 
     public FXAudioCue(CueNumber number)
     {
@@ -305,6 +306,15 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     public void setSource(String source)
     {
         if(source == null || source.isEmpty()) throw new IllegalArgumentException("Source cannot be null or empty");
+        if(projectPath == null) throw new IllegalStateException("The project path has not been propagated to this cue");
+
+        if(!(new File(projectPath, source).exists()))
+        {
+            // probably not a relative path already, try to relativize it
+            source = new File(projectPath).toURI().relativize(new File(source).toURI()).getPath();
+        }
+
+        if(!(new File(projectPath, source).exists())) throw new IllegalArgumentException("The file at " + source + " does not exist");
 
         this.source = source;
 
@@ -317,7 +327,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
             Log.warn("Failed to clean up previous backend", e);
         }
 
-        backendSource = new Media(new File(source).toURI().toString());
+        backendSource = new Media(new File(projectPath, source).toURI().toString());
         backend = new MediaPlayer(backendSource);
 
         backend.setOnReady(() -> {
@@ -370,5 +380,11 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     public void setPan(double pan)
     {
         this.pan = pan < -1.0 ? -1.0 : (pan > 1.0 ? 1.0 : pan);
+    }
+
+    @Override
+    public void consumeProjectPath(String path)
+    {
+        projectPath = path;
     }
 }

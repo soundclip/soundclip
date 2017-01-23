@@ -45,7 +45,8 @@ public class Project implements Iterable<CueList>, AutoCloseable
 {
     private static Logger Log = LogManager.getLogger(Project.class);
 
-    private String projectPath;
+    private final String projectPath;
+    private final String parentPath;
     private String name;
     private ZonedDateTime lastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.of("UTC"));
     private boolean dirty;
@@ -65,16 +66,6 @@ public class Project implements Iterable<CueList>, AutoCloseable
     /** A signal triggered when a cue list is removed */
     public final Signal<CueList> onCueListRemoved = new Signal<>();
 
-    private Project()
-    {
-        projectPath = null;
-        name = "Untitled Project";
-        lastModified = null;
-        cueLists = new ArrayList<>();
-
-        appendCueList("Default Cue List");
-    }
-
     /**
      * Loads the project at the specified path on disk
      *
@@ -89,12 +80,15 @@ public class Project implements Iterable<CueList>, AutoCloseable
 
     public Project(String path, String name) throws IOException
     {
-        this();
+        this.name = name;
+        lastModified = null;
+        cueLists = new ArrayList<>();
+
+        appendCueList("Default Cue List");
 
         if(path == null) throw new IllegalArgumentException("Project path cannot be null");
 
         projectPath = path;
-        if(name != null) this.name = name;
 
         File f = new File(path);
 
@@ -102,9 +96,11 @@ public class Project implements Iterable<CueList>, AutoCloseable
         {
             Log.info("Creating new project at '{}'", path);
             save();
+            parentPath = new File(path).getParent();
             return;
         }
 
+        parentPath = new File(path).getParent();
         if(!f.isFile()) throw new IllegalArgumentException("File does not exist or is not a file '" + path + "'");
         Log.info("Loading project from '{}'", path);
 
@@ -122,6 +118,7 @@ public class Project implements Iterable<CueList>, AutoCloseable
             for(JsonNode cueList : project.get("cueLists"))
             {
                 CueList c = appendCueList(cueList.get("name").asText());
+                c.consumeProjectPath(parentPath);
                 c.load(cueList);
             }
         }
@@ -137,6 +134,7 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public CueList appendCueList(String name)
     {
         CueList c = new CueList(name);
+        c.consumeProjectPath(parentPath);
 
         cueLists.add(c);
         onCueListAdded.post(c);
@@ -163,6 +161,8 @@ public class Project implements Iterable<CueList>, AutoCloseable
     {
         return projectPath;
     }
+
+    public String getProjectLocation() { return parentPath; }
 
     /** @return the name of the project */
     public String getName()

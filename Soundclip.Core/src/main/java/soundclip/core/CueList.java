@@ -21,8 +21,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
+import soundclip.core.cues.IProjectPathConsumer;
 import soundclip.core.cues.impl.FXAudioCue;
 import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
@@ -33,11 +35,12 @@ import java.util.*;
 /**
  * A named, ordered, collection of cues
  */
-public class CueList implements Iterable<ICue>, AutoCloseable
+public class CueList implements Iterable<ICue>, AutoCloseable, IProjectPathConsumer
 {
     private static Logger Log = LogManager.getLogger(CueList.class);
 
     private String name;
+    private String projectPath = null;
     private final ObservableList<ICue> backingList;
     private final SortedList<ICue> cues;
 
@@ -211,6 +214,7 @@ public class CueList implements Iterable<ICue>, AutoCloseable
 
     void load(JsonNode cueList)
     {
+        if(projectPath == null) throw new IllegalStateException("The project path has not been propagated to this cue list");
         Log.debug("Loading CueList {}", name);
 
         // name is initialized by the project
@@ -225,6 +229,7 @@ public class CueList implements Iterable<ICue>, AutoCloseable
             if(typeName.equals(FXAudioCue.class.getCanonicalName()))
             {
                 c = new FXAudioCue(number);
+                ((IProjectPathConsumer)c).consumeProjectPath(projectPath);
                 c.load(cue);
             }
             else if(typeName.equals(NoteCue.class.getCanonicalName()))
@@ -271,5 +276,11 @@ public class CueList implements Iterable<ICue>, AutoCloseable
                 ((AutoCloseable)c).close();
             }
         }
+    }
+
+    @Override
+    public void consumeProjectPath(String path)
+    {
+        projectPath = path;
     }
 }

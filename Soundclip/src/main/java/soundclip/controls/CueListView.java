@@ -216,6 +216,7 @@ public class CueListView extends Tab
                     if(Arrays.stream(extensions).anyMatch(fileExtension::equals))
                     {
                         IAudioCue cue = new FXAudioCue(getNextCueNumber());
+                        cue.consumeProjectPath(Soundclip.Instance().getCurrentProject().getProjectLocation());
                         cue.setSource(f.getAbsolutePath());
                         cue.setName(f.getName());
 
