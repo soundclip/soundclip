@@ -1,3 +1,6 @@
 [submodule "lib/JavaOSC"]
 	path = lib/JavaOSC
 	url = https://github.com/soundclip/JavaOSC.git
+[submodule "lib/FXHeaderBar"]
+	path = lib/FXHeaderBar
+	url = https://github.com/soundclip/FXHeaderBar.git
