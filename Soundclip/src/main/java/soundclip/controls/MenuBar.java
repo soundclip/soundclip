@@ -29,10 +29,7 @@ import soundclip.Soundclip;
 import soundclip.Utils;
 import soundclip.core.CueNumber;
 import soundclip.core.Project;
-import soundclip.dialogs.AboutDialog;
-import soundclip.dialogs.AudioCueEditorDialog;
-import soundclip.dialogs.ExceptionDialog;
-import soundclip.dialogs.NoteCueEditorDialog;
+import soundclip.dialogs.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,6 +116,7 @@ public class MenuBar extends FXHeaderBar
         {
             try
             {
+                Soundclip.Instance().getGlobalSettings().setLastFileChooserDirectory(result.getParent());
                 Soundclip.Instance().setCurrentProject(new Project(result.getAbsolutePath()));
             }
             catch (IOException e)
@@ -136,30 +134,6 @@ public class MenuBar extends FXHeaderBar
     protected void doSaveProject(ActionEvent event)
     {
         Project p = Soundclip.Instance().getCurrentProject();
-
-        if(p.getPath() == null)
-        {
-            FileChooser fc = new FileChooser();
-            fc.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("SoundClip Projects", "*.scproj")
-            );
-            fc.setTitle("Save Project As");
-
-            String lastDir = Soundclip.Instance().getGlobalSettings().getLastFileChooserDirectory();
-            if(lastDir != null && !lastDir.isEmpty())
-            {
-                fc.setInitialDirectory(new File(lastDir));
-            }
-
-            File result = fc.showSaveDialog(getScene().getWindow());
-
-            if (result == null) return;
-
-            String path = result.getAbsolutePath();
-            if(!path.endsWith(".scproj")) path += ".scproj";
-            p.setPath(path);
-        }
-
         try
         {
             p.save();
@@ -177,14 +151,9 @@ public class MenuBar extends FXHeaderBar
     @FXML
     protected void doNewProject(ActionEvent event)
     {
-        Project p = Soundclip.Instance().getCurrentProject();
+        Project p = NewProjectDialog.present();
 
-        if(p.getPath() == null || p.isDirty())
-        {
-            Log.debug("TODO: Save currently open project");
-        }
-
-        Log.debug("TODO: Show file chooser for new project");
+        if(p != null) Soundclip.Instance().setCurrentProject(p);
     }
 
     private void doAddAudioCue(ActionEvent event)

@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core.tests;
 
+import org.junit.Before;
 import org.junit.Test;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
@@ -37,11 +38,20 @@ import static org.mockito.Mockito.when;
  */
 public class ProjectTests
 {
+    private Project p;
+
+    @Before
+    public void setUp() throws IOException
+    {
+        File tempProjectPath = TestUtils.createTemporaryFolder();
+        File tempProject = TestUtils.createTemporaryFile(tempProjectPath, "scproj");
+
+        p = new Project(tempProject.getAbsolutePath());
+    }
+
     @Test
     public void canAddCueList()
     {
-        Project p = new Project();
-
         final boolean[] callbackCalledProxy = new boolean[]{false};
         p.onCueListAdded.whenTriggered((c) ->
         {
@@ -59,7 +69,6 @@ public class ProjectTests
     @Test
     public void canRemoveCueListByName()
     {
-        Project p = new Project();
         CueList list = p.appendCueList("asdf");
 
         final boolean[] callbackCalledProxy = new boolean[]{false};
@@ -78,7 +87,6 @@ public class ProjectTests
     @Test
     public void canRemoveCueListByRef()
     {
-        Project p = new Project();
         CueList list = p.appendCueList("asdf");
 
         final boolean[] callbackCalledProxy = new boolean[]{false};
@@ -95,32 +103,8 @@ public class ProjectTests
     }
 
     @Test
-    public void canSetPathOnlyOnce()
-    {
-        Project p = new Project();
-
-        String path = "/path/to/project";
-        p.setPath(path);
-
-        assertThat(p.getPath(), is(equalTo(path)));
-
-        try
-        {
-            p.setPath("/some/other/path");
-            fail();
-        }
-        catch(Exception ex)
-        {
-            assertThat(ex, is(instanceOf(IllegalStateException.class)));
-            assertThat(ex.getMessage(), is(equalTo("The project has already been saved")));
-        }
-    }
-
-    @Test
     public void canSetName()
     {
-        Project p = new Project();
-
         String name = "asdf";
         p.setName(name);
 
@@ -130,8 +114,6 @@ public class ProjectTests
     @Test
     public void countsAllCuesInAllLists()
     {
-        Project p = new Project();
-
         CueList a = p.appendCueList("a");
         CueList b = p.appendCueList("b");
         CueList c = p.appendCueList("c");
@@ -163,7 +145,6 @@ public class ProjectTests
     @Test
     public void canIterateOverCueLists()
     {
-        Project p = new Project();
         p.appendCueList("a");
         p.appendCueList("b");
 

@@ -107,7 +107,11 @@ public class WelcomeWindow extends BorderPane
         newProject.setOnMouseClicked((e) -> {
             if(e.getButton() == MouseButton.PRIMARY)
             {
-                Log.debug("TODO: Create new project");
+                loadedProject = NewProjectDialog.present();
+                if(loadedProject != null)
+                {
+                    ((Stage)getScene().getWindow()).close();
+                }
             }
         });
 
@@ -123,6 +127,7 @@ public class WelcomeWindow extends BorderPane
                 String lastDir = Soundclip.Instance().getGlobalSettings().getLastFileChooserDirectory();
                 if(lastDir != null && !lastDir.isEmpty())
                 {
+                    Log.debug("Using last open directory {}", lastDir);
                     fc.setInitialDirectory(new File(lastDir));
                 }
 
@@ -131,6 +136,7 @@ public class WelcomeWindow extends BorderPane
                 {
                     try
                     {
+                        Soundclip.Instance().getGlobalSettings().setLastFileChooserDirectory(result.getParent());
                         loadedProject = new Project(result.getAbsolutePath());
                         ((Stage)getScene().getWindow()).close();
                     }

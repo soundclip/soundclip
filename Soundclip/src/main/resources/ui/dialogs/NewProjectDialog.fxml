@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
+         stylesheets="/css/theme.css, /css/validate.css, /css/dialogs/NewProjectDialog.css">
+
+    <padding>
+        <Insets top="5" bottom="5" left="5" right="5" />
+    </padding>
+
+    <center>
+        <GridPane hgap="5" vgap="5">
+
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0" text="Name:" />
+            <TextField fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="2" />
+
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="Project Path:" />
+            <TextField fx:id="projectPath" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button GridPane.columnIndex="2" GridPane.rowIndex="1" text="..." onAction="#showFileChooser" />
+
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Cancel" onAction="#onCancel" />
+            <Button text="Create Project" onAction="#onCreateProject" />
+        </HBox>
+    </bottom>
+
+</fx:root>

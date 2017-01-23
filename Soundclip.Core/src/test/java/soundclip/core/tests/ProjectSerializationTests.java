@@ -107,39 +107,13 @@ public class ProjectSerializationTests
     }
 
     @Test
-    public void saveProjectThrowsWhenPathNotSet()
-    {
-        Project p = new Project();
-
-        try
-        {
-            p.save();
-            fail();
-        }
-        catch(Exception ex)
-        {
-            assertThat(ex, is(instanceOf(IllegalStateException.class)));
-            assertThat(ex.getMessage(), is(equalTo("The project path has not been specified")));
-        }
-    }
-
-    @Test
     public void canSaveProject() throws IOException
     {
-        Project p = new Project();
+        File tempProjectPath = TestUtils.createTemporaryFolder();
+        File tempProject = TestUtils.createTemporaryFile(tempProjectPath, "scproj");
 
-        File tempProjectPath = Paths.get(System.getProperty("java.io.tmpdir"), "soundclip-"+UUID.randomUUID().toString()).toFile();
-        tempProjectPath.deleteOnExit();
+        Project p = new Project(tempProject.getAbsolutePath());
 
-        if(!tempProjectPath.exists()) tempProjectPath.mkdirs();
-        File tempProject = new File(tempProjectPath, "test.scproj");
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            tempProject.delete();
-            tempProjectPath.delete();
-        }));
-
-        p.setPath(tempProject.getPath());
         p.save();
 
         // TODO: Verify the project saved correctly when we actually implement serialization / deserialization

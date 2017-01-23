@@ -65,10 +65,7 @@ public class Project implements Iterable<CueList>, AutoCloseable
     /** A signal triggered when a cue list is removed */
     public final Signal<CueList> onCueListRemoved = new Signal<>();
 
-    /**
-     * Creates a new, empty Project
-     */
-    public Project()
+    private Project()
     {
         projectPath = null;
         name = "Untitled Project";
@@ -81,27 +78,42 @@ public class Project implements Iterable<CueList>, AutoCloseable
     /**
      * Loads the project at the specified path on disk
      *
-     * @param fromPath the path to load the project from
+     * @param path the path to load the project from
      *
      * @throws IOException if the project could not be loaded successfully
      */
-    public Project(String fromPath) throws IOException
+    public Project(String path) throws IOException
+    {
+        this(path, null);
+    }
+
+    public Project(String path, String name) throws IOException
     {
         this();
 
-        File f = new File(fromPath);
+        if(path == null) throw new IllegalArgumentException("Project path cannot be null");
 
-        if(!f.exists() || !f.isFile()) throw new IllegalArgumentException("File does not exist or is not a file '" + fromPath + "'");
-        Log.info("Loading project from '{}'", fromPath);
+        projectPath = path;
+        if(name != null) this.name = name;
 
-        projectPath = fromPath;
+        File f = new File(path);
+
+        if(!f.exists())
+        {
+            Log.info("Creating new project at '{}'", path);
+            save();
+            return;
+        }
+
+        if(!f.isFile()) throw new IllegalArgumentException("File does not exist or is not a file '" + path + "'");
+        Log.info("Loading project from '{}'", path);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode project = mapper.readTree(f);
 
         try
         {
-            name = project.get("name").asText();
+            this.name = project.get("name").asText();
             lastModified = ZonedDateTime.parse(project.get("lastModified").asText());
             panicHardStopBefore = project.get("panicHardStopBefore").asLong();
 
@@ -150,20 +162,6 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public String getPath()
     {
         return projectPath;
-    }
-
-    /**
-     * Sets the path to the project on the filesystem
-     *
-     * @throws IllegalStateException If the project was already saved (It already has a path)
-     */
-    public void setPath(String projectPath)
-    {
-        if (this.projectPath != null) throw new IllegalStateException("The project has already been saved");
-
-        this.projectPath = projectPath;
-
-        onPathSet.post(this.projectPath);
     }
 
     /** @return the name of the project */
