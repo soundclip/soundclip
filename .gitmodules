@@ -3,4 +3,4 @@
 	url = https://github.com/soundclip/JavaOSC.git
 [submodule "lib/FXHeaderBar"]
 	path = lib/FXHeaderBar
-	url = git@github.com:soundclip/FXHeaderBar.git
+	url = https://github.com/soundclip/FXHeaderBar.git
