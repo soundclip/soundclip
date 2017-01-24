@@ -18,9 +18,9 @@
         <ToggleButton fx:id="lockWorkspace" onAction="#toggleWorkspaceLock"/>
         <MenuButton id="menu">
             <items>
-                <MenuItem text="Renumber CueList" />
-                <MenuItem text="Rename CueList" onAction="#onRenameCueList"/>
-                <MenuItem text="Project Properties" />
+                <MenuItem fx:id="renumberCueListItem" text="Renumber CueList" onAction="#onRenumberCueList" />
+                <MenuItem fx:id="renameCueListItem" text="Rename CueList" onAction="#onRenameCueList"/>
+                <MenuItem text="Project Properties" onAction="#onProjectProperties" />
                 <MenuItem text="Close Project" onAction="#onCloseProject" />
                 <MenuItem text="About" onAction="#onAbout"/>
             </items>

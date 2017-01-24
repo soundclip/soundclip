@@ -116,9 +116,6 @@ public class CueListView extends Tab
                         setText(Utils.durationToString(model.getDuration()));
                         setStyle("");
                     }
-
-
-                    //TODO: Style only if playing
                 }else{
                     setText("");
                 }
@@ -143,8 +140,6 @@ public class CueListView extends Tab
                         setText(Utils.durationToString(model.getPostWaitDelay()));
                         setStyle("");
                     }
-
-                    //TODO: Style only if playing
                 }else{
                     setText("");
                 }
@@ -152,7 +147,7 @@ public class CueListView extends Tab
         });
 
         tableView.setOnKeyReleased((e) -> {
-            if(e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER)
+            if((e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER) && Soundclip.Instance().isWorkspaceLocked())
             {
                 e.consume();
                 goNextCue();
@@ -165,8 +160,7 @@ public class CueListView extends Tab
         });
 
         tableView.setOnMouseClicked((e) -> {
-            // TODO: Disregard if project is locked
-            if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY)
+            if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY && !Soundclip.Instance().isWorkspaceLocked())
             {
                 ICue c = getSelectedCue();
                 if(c == null) return;
@@ -194,7 +188,7 @@ public class CueListView extends Tab
         });
 
         tableView.setOnDragOver((e) -> {
-            if(e.getDragboard().hasFiles())
+            if(e.getDragboard().hasFiles() && !Soundclip.Instance().isWorkspaceLocked())
             {
                 e.acceptTransferModes(TransferMode.COPY);
             }
@@ -207,7 +201,7 @@ public class CueListView extends Tab
         tableView.setOnDragDropped((e) -> {
             boolean success = false;
 
-            if(e.getDragboard().hasFiles())
+            if(e.getDragboard().hasFiles() && !Soundclip.Instance().isWorkspaceLocked())
             {
                 success = true;
                 String[] extensions = new FXAudioCue(new CueNumber(1)).getSupportedExtensions();
@@ -250,6 +244,8 @@ public class CueListView extends Tab
     public int getSelectedIndex() { return tableView.getSelectionModel().getSelectedIndex(); }
 
     public void goNextCue() {
+        if(!Soundclip.Instance().isWorkspaceLocked()) return;
+
         int i = getSelectedIndex();
         ICue c = getSelectedCue();
 

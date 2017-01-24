@@ -16,6 +16,8 @@ package soundclip;
 
 import com.github.zafarkhaja.semver.Version;
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
@@ -52,6 +54,8 @@ public class Soundclip extends Application
     private final Settings globalSettings = new Settings();
     private Project currentProject;
     private OSCServer oscServer;
+
+    private BooleanProperty workspaceLocked = new SimpleBooleanProperty(false);
 
     public static void main(String[] args)
     {
@@ -225,5 +229,20 @@ public class Soundclip extends Application
     public Settings getGlobalSettings()
     {
         return globalSettings;
+    }
+
+    public boolean isWorkspaceLocked()
+    {
+        return workspaceLocked.getValue();
+    }
+
+    public BooleanProperty workspaceLockedProperty()
+    {
+        return workspaceLocked;
+    }
+
+    public void setWorkspaceLocked(boolean workspaceLocked)
+    {
+        this.workspaceLocked.setValue(workspaceLocked);
     }
 }

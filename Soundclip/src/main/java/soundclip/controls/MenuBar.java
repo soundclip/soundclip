@@ -45,6 +45,8 @@ public class MenuBar extends FXHeaderBar
     private static Logger Log = LogManager.getLogger(MenuBar.class);
 
     @FXML private MenuButton addItem;
+    @FXML private MenuItem renumberCueListItem;
+    @FXML private MenuItem renameCueListItem;
     @FXML private ToggleButton lockWorkspace;
 
     private Date lastPanicTime = Date.from(Instant.EPOCH);
@@ -57,6 +59,10 @@ public class MenuBar extends FXHeaderBar
 
         initAddItems(addItem.getItems());
         useLightIcons();
+
+        addItem.disableProperty().bind(Soundclip.Instance().workspaceLockedProperty());
+        renumberCueListItem.disableProperty().bind(Soundclip.Instance().workspaceLockedProperty());
+        renameCueListItem.disableProperty().bind(Soundclip.Instance().workspaceLockedProperty());
     }
 
     private void init(Project p)
@@ -218,9 +224,13 @@ public class MenuBar extends FXHeaderBar
     @FXML
     protected void toggleWorkspaceLock(ActionEvent event)
     {
-        boolean setLock = lockWorkspace.isSelected();
+        Soundclip.Instance().setWorkspaceLocked(lockWorkspace.isSelected());
+    }
 
-        Log.debug("TODO: Set project lock to {}", setLock);
+    @FXML
+    protected void onRenumberCueList(ActionEvent event)
+    {
+        Log.debug("TODO: Renumber cue list-");
     }
 
     @FXML
@@ -236,6 +246,12 @@ public class MenuBar extends FXHeaderBar
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> Soundclip.Instance().getActiveCueList().ifPresent(c -> c.setName(name)));
+    }
+
+    @FXML
+    protected void onProjectProperties()
+    {
+        Log.debug("TODO: Show project properties window");
     }
 
     @FXML
