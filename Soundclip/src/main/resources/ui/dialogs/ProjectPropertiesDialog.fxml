@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
+         stylesheets="/css/theme.css, /css/validate.css, /css/dialogs/ProjectPropertiesDialog.css">
+
+    <padding>
+        <Insets top="5" bottom="5" left="5" right="5" />
+    </padding>
+
+    <top>
+        <HBox alignment="CENTER">
+            <Label fx:id="statsLabel" alignment="CENTER" />
+        </HBox>
+    </top>
+    <center>
+        <GridPane hgap="5" vgap="5">
+            <padding>
+                <Insets top="10" />
+            </padding>
+
+            <columnConstraints>
+                <ColumnConstraints/>
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+
+            <Label text="Project Path:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label fx:id="projectPathField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Panic Hard-Stop Threshold:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Spinner fx:id="panicHardStopSpinner" editable="true" AnchorPane.bottomAnchor="0"
+                         AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+            </AnchorPane>
+
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Cancel" onAction="#doCancel" />
+            <Button text="Save" onAction="#doSave" />
+        </HBox>
+    </bottom>
+
+</fx:root>

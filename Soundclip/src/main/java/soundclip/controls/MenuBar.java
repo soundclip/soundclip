@@ -251,7 +251,7 @@ public class MenuBar extends FXHeaderBar
     @FXML
     protected void onProjectProperties()
     {
-        Log.debug("TODO: Show project properties window");
+        new ProjectPropertiesDialog(Soundclip.Instance().getCurrentProject()).present();
     }
 
     @FXML

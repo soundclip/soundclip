@@ -1,0 +1,7 @@
+#statsLabel {
+    -fx-font-size: 18px;
+}
+
+#projectPathField {
+    -fx-font-weight: bold;
+}
