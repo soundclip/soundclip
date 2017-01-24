@@ -29,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.Soundclip;
 import soundclip.Utils;
-import soundclip.controllers.MainWindow;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
 import soundclip.core.cues.IAudioCue;
@@ -170,6 +169,7 @@ public class CueListView extends Tab
             if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY)
             {
                 ICue c = getSelectedCue();
+                if(c == null) return;
                 if(c instanceof IAudioCue)
                 {
                     new AudioCueEditorDialog((IAudioCue)c).present();
@@ -181,7 +181,9 @@ public class CueListView extends Tab
                 else
                 {
                     Log.fatal("Encountered an unknown cue type: {}", c.getClass().getTypeName());
+                    return;
                 }
+                Soundclip.Instance().getController().getNotesPane().updateNotes(model.previous(c), c, model.next(c));
             }
         });
 

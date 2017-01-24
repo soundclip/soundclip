@@ -19,33 +19,34 @@
                 <ColumnConstraints />
                 <ColumnConstraints hgrow="ALWAYS" />
                 <ColumnConstraints />
+                <ColumnConstraints hgrow="ALWAYS"/>
                 <ColumnConstraints />
             </columnConstraints>
-            <CommonCuePropertyEditor fx:id="commonEditor" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="4" />
+            <CommonCuePropertyEditor fx:id="commonEditor" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="5" />
 
             <Label text="Audio File:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
-            <TextField fx:id="audioFilePath" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2" />
-            <Button text="..." GridPane.rowIndex="1" GridPane.columnIndex="3" onAction="#showFileChooser" />
+            <TextField fx:id="audioFilePath" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3" />
+            <Button text="..." GridPane.rowIndex="1" GridPane.columnIndex="4" onAction="#showFileChooser" />
 
             <Label text="Start Offset" GridPane.rowIndex="2" GridPane.columnIndex="0" />
             <TimePicker fx:id="startOffset" GridPane.rowIndex="2" GridPane.columnIndex="1" />
 
             <Label text="End Offset" GridPane.rowIndex="2" GridPane.columnIndex="2" />
-            <TimePicker fx:id="endOffset" GridPane.rowIndex="2" GridPane.columnIndex="3" />
+            <TimePicker fx:id="endOffset" GridPane.rowIndex="2" GridPane.columnIndex="3" GridPane.columnSpan="2"/>
 
             <Label text="Fade In Over:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
             <TimePicker fx:id="fadeInOver" GridPane.rowIndex="3" GridPane.columnIndex="1" />
 
             <Label text="Fade Out Over:" GridPane.rowIndex="3" GridPane.columnIndex="2" />
-            <TimePicker fx:id="fadeOutOver" GridPane.rowIndex="3" GridPane.columnIndex="3" />
+            <TimePicker fx:id="fadeOutOver" GridPane.rowIndex="3" GridPane.columnIndex="3" GridPane.columnSpan="2" />
 
             <Label text="Pitch" GridPane.rowIndex="4" GridPane.columnIndex="0" />
-            <Slider fx:id="pitchSlider" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="3"
+            <Slider fx:id="pitchSlider" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="4"
                     min="-3.0" max="3.0" majorTickUnit="0.5" showTickMarks="true" showTickLabels="true"
                     snapToTicks="true" />
 
             <Label text="Pan" GridPane.rowIndex="5" GridPane.columnIndex="0" />
-            <Slider fx:id="panSlider" GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="3"
+            <Slider fx:id="panSlider" GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="4"
                     min="-1.0" max="1.0" majorTickUnit="0.1" showTickMarks="true" />
 
         </GridPane>
