@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.IAudioCue;
@@ -26,6 +27,7 @@ import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
 import soundclip.core.cues.IProjectPathConsumer;
 import soundclip.core.cues.impl.FXAudioCue;
+import soundclip.core.cues.impl.FadeCue;
 import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
 
@@ -43,6 +45,7 @@ public class CueList implements Iterable<ICue>, AutoCloseable, IProjectPathConsu
     private String projectPath = null;
     private final ObservableList<ICue> backingList;
     private final SortedList<ICue> cues;
+    private Project project;
 
     /** A signal that is triggered when the name of the cue list changes */
     public final Signal<String> onNameChanged = new Signal<>();
@@ -78,20 +81,20 @@ public class CueList implements Iterable<ICue>, AutoCloseable, IProjectPathConsu
     }
 
     /** Panic-stop all cues in the list */
-    public void panic(boolean hard)
+    public void panic(Duration duration, boolean hard)
     {
         Log.debug("PANIC! {} (in list {})", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully", name);
         cues.forEach((cue) ->
         {
             if(hard || !(cue instanceof IFadeableCue))
             {
-                Log.debug("PANIC! Stopping {} - {}", cue.getNumber(), cue.getName());
+                Log.debug("PANIC! Stopping {}", cue);
                 cue.stop();
             }
             else
             {
-                Log.debug("PANIC! Fading out {} - {}", cue.getNumber(), cue.getName());
-                ((IFadeableCue)cue).fadeOut();
+                Log.debug("PANIC! Fading out {}", cue);
+                ((IFadeableCue)cue).fadeOut(duration);
             }
         });
     }
@@ -237,6 +240,11 @@ public class CueList implements Iterable<ICue>, AutoCloseable, IProjectPathConsu
                 c = new NoteCue(number);
                 c.load(cue);
             }
+            else if(typeName.equals(FadeCue.class.getCanonicalName()))
+            {
+                c = new FadeCue(number);
+                c.load(cue);
+            }
             else
             {
                 Log.warn("Unable to load cue of type {} (Unknown cue type)", typeName);
@@ -257,7 +265,7 @@ public class CueList implements Iterable<ICue>, AutoCloseable, IProjectPathConsu
             {
                 for(ICue c : this)
                 {
-                    Log.debug("\tWriting cue {} - {}", c.getNumber(), c.getName());
+                    Log.debug("\tWriting cue {}", c);
                     c.serialize(w);
                 }
             }

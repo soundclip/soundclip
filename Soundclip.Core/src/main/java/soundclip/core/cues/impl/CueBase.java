@@ -23,12 +23,14 @@ import soundclip.core.cues.ICue;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The base implementation for cues
  */
 public abstract class CueBase implements ICue
 {
+    private UUID guid;
     private CueNumber number;
     private String name;
     private String notes;
@@ -38,11 +40,18 @@ public abstract class CueBase implements ICue
 
     protected CueBase()
     {
+        guid = UUID.randomUUID();
         name = "Untitled Cue";
         notes = "";
         preWaitDelay = Duration.ZERO;
         postWaitDelay = Duration.ZERO;
         progressType = ProgressType.FOCUS;
+    }
+
+    @Override
+    public UUID getGUID()
+    {
+        return guid;
     }
 
     @Override
@@ -140,6 +149,11 @@ public abstract class CueBase implements ICue
         setName(cue.get("name").asText());
         setNotes(cue.get("notes").asText(null));
 
+        if(cue.has("guid"))
+        {
+            guid = UUID.fromString(cue.get("guid").asText());
+        }
+
         if(cue.has("progressType"))
         {
             setProgressType(ProgressType.valueOf(cue.get("progressType").asText("FOCUS").toUpperCase()));
@@ -148,9 +162,16 @@ public abstract class CueBase implements ICue
 
     protected void serializeCommonFields(JsonGenerator w) throws IOException
     {
+        w.writeStringField("guid", guid.toString());
         w.writeStringField("name", getName());
         w.writeStringField("number", getNumber().toString());
         w.writeStringField("notes", getNotes());
         w.writeStringField("progressType", getProgressType().toString());
+    }
+
+    @Override
+    public String toString()
+    {
+        return getNumber() + " - " + getName();
     }
 }

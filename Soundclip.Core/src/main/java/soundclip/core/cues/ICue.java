@@ -9,12 +9,16 @@ import soundclip.core.ProgressType;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The basic cue interface
  */
 public interface ICue extends  IProgressProvider
 {
+    /** @return the unique ID of this cue in the project */
+    UUID getGUID();
+
     /** @return the number of the cue */
     CueNumber getNumber();
     /** Set the number of the cue */

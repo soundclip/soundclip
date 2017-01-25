@@ -20,8 +20,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import soundclip.core.cues.ICue;
 import soundclip.core.cues.impl.NoteCue;
 import soundclip.core.interop.Signal;
 
@@ -36,6 +38,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.UUID;
 
 /**
  * A project is the basic unit of work. Each project contains a collection of cue lists
@@ -120,6 +123,16 @@ public class Project implements Iterable<CueList>, AutoCloseable
                 CueList c = appendCueList(cueList.get("name").asText());
                 c.consumeProjectPath(parentPath);
                 c.load(cueList);
+            }
+
+            for(CueList list : this)
+            {
+                for(ICue c : list)
+                {
+                    if(!(c instanceof IPostLoadHook)) continue;
+
+                    ((IPostLoadHook)c).onProjectLoaded(this);
+                }
             }
         }
         catch (NullPointerException ex)
@@ -208,7 +221,20 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public void panic(boolean hard)
     {
         Log.warn("PANIC! {}", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully");
-        cueLists.forEach((list) -> list.panic(hard));
+        cueLists.forEach((list) -> list.panic(Duration.millis(panicHardStopBefore), hard));
+    }
+
+    public ICue resolveCue(UUID id)
+    {
+        for(CueList list : this)
+        {
+            for(ICue c : list)
+            {
+                if(c.getGUID().equals(id)) return c;
+            }
+        }
+
+        return null;
     }
 
     /**

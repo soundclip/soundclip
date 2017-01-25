@@ -35,9 +35,11 @@ import soundclip.core.ProgressType;
 import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.impl.FXAudioCue;
+import soundclip.core.cues.impl.FadeCue;
 import soundclip.core.cues.impl.NoteCue;
-import soundclip.dialogs.AudioCueEditorDialog;
-import soundclip.dialogs.NoteCueEditorDialog;
+import soundclip.dialogs.editors.AudioCueEditorDialog;
+import soundclip.dialogs.editors.FadeCueEditorDialog;
+import soundclip.dialogs.editors.NoteCueEditorDialog;
 
 import java.io.File;
 import java.util.Arrays;
@@ -173,6 +175,10 @@ public class CueListView extends Tab
                 {
                     new NoteCueEditorDialog((NoteCue)c).present();
                 }
+                else if(c instanceof FadeCue)
+                {
+                    new FadeCueEditorDialog((FadeCue)c).present();
+                }
                 else
                 {
                     Log.fatal("Encountered an unknown cue type: {}", c.getClass().getTypeName());
@@ -217,7 +223,7 @@ public class CueListView extends Tab
                         cue.setSource(f.getAbsolutePath());
                         cue.setName(f.getName());
 
-                        Log.info("Adding dropped cue {} - {}", cue.getNumber(), cue.getName());
+                        Log.info("Adding dropped cue {}", cue);
                         model.add(cue);
                     }
                     else
@@ -250,7 +256,7 @@ public class CueListView extends Tab
         int i = getSelectedIndex();
         ICue c = getSelectedCue();
 
-        Log.debug("GO {} - {}", c.getNumber(), c.getName());
+        Log.debug("GO {}", c);
         c.go();
 
         boolean triggerNext = c.getProgressType() == ProgressType.TRIGGER;

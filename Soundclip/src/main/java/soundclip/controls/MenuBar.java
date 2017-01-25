@@ -27,9 +27,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.Soundclip;
 import soundclip.Utils;
-import soundclip.core.CueNumber;
 import soundclip.core.Project;
 import soundclip.dialogs.*;
+import soundclip.dialogs.editors.AudioCueEditorDialog;
+import soundclip.dialogs.editors.FadeCueEditorDialog;
+import soundclip.dialogs.editors.NoteCueEditorDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +87,11 @@ public class MenuBar extends FXHeaderBar
         addNoteCue.setOnAction(this::doAddNoteCue);
         addNoteCue.getStyleClass().add("add-note-cue");
         i.add(addNoteCue);
+
+        MenuItem addFadeCue = new MenuItem("Fade Cue");
+        addFadeCue.setOnAction(this::doAddFadeCue);
+        addFadeCue.getStyleClass().add("add-fade-cue");
+        i.add(addFadeCue);
 
         i.add(new SeparatorMenuItem());
 
@@ -193,6 +200,25 @@ public class MenuBar extends FXHeaderBar
 
         CueListView selectedCueList = view.get();
         NoteCueEditorDialog editor = new NoteCueEditorDialog(selectedCueList.getNextCueNumber());
+        editor.present();
+
+        if(editor.isSuccess())
+        {
+            selectedCueList.getModel().add(editor.getModel());
+        }
+    }
+
+    private void doAddFadeCue(ActionEvent actionEvent)
+    {
+        Optional<CueListView> view = Soundclip.Instance().getActiveCueListView();
+        if(!view.isPresent())
+        {
+            Log.warn("No cue list selected. Someone messed up");
+            return;
+        }
+
+        CueListView selectedCueList = view.get();
+        FadeCueEditorDialog editor = new FadeCueEditorDialog(selectedCueList.getNextCueNumber());
         editor.present();
 
         if(editor.isSuccess())

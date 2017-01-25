@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-package soundclip.dialogs;
+package soundclip.dialogs.editors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,7 +27,7 @@ import soundclip.core.CueNumber;
 import soundclip.core.cues.impl.NoteCue;
 
 /**
- * The editor for {@link soundclip.core.cues.impl.NoteCue}
+ * The editor for {@link soundclip.core.cues.impl.NoteCue}s
  */
 public class NoteCueEditorDialog extends BorderPane
 {
@@ -48,7 +48,7 @@ public class NoteCueEditorDialog extends BorderPane
 
     public NoteCueEditorDialog(NoteCue cue)
     {
-        FXMLLoader fxmlLoader = Utils.load(this, "ui/dialogs/NoteCueEditorDialog.fxml");
+        FXMLLoader fxmlLoader = Utils.load(this, "ui/dialogs/editors/NoteCueEditorDialog.fxml");
 
         model = cue;
         commonEditor.setModel(model);

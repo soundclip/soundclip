@@ -26,6 +26,10 @@
     -fx-graphic: url('/img/ic_queue_music_white_18dp_1x.png');
 }
 
+.add-fade-cue > .label {
+    -fx-graphic: url('/img/ic_timeline_white_18dp_1x.png');
+}
+
 #panic {
     -fx-graphic: url('/img/ic_warning_white_24dp_1x.png')
 }

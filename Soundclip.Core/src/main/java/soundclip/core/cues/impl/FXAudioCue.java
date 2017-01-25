@@ -46,8 +46,6 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 {
     private static final Logger Log = LogManager.getLogger(FXAudioCue.class);
 
-    private Duration fadeInDuration;
-    private Duration fadeOutDuration;
     private double pitch;
     private double pan;
 
@@ -64,38 +62,12 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         super();
 
         setNumber(number);
-        fadeInDuration = Duration.ZERO;
-        fadeOutDuration = Duration.ZERO;
     }
 
     @Override
     public Duration getDuration()
     {
         return backendSource == null || backend == null ? Duration.ZERO : backend.getTotalDuration();
-    }
-
-    @Override
-    public Duration getFadeInDuration()
-    {
-        return fadeInDuration;
-    }
-
-    @Override
-    public void setFadeInDuration(Duration duration)
-    {
-        fadeInDuration = duration;
-    }
-
-    @Override
-    public Duration getFadeOutDuration()
-    {
-        return fadeOutDuration;
-    }
-
-    @Override
-    public void setFadeOutDuration(Duration duration)
-    {
-        fadeOutDuration = duration;
     }
 
     @Override
@@ -162,8 +134,6 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         // Cue Number is set by the cue list deserializer
         deserializeCommonFields(cue);
 
-        fadeInDuration = Duration.millis(cue.get("fadeInDuration").asDouble());
-        fadeOutDuration = Duration.millis(cue.get("fadeOutDuration").asDouble());
         pan = cue.get("pan").asDouble();
         pitch = cue.get("pitch").asDouble();
 
@@ -179,8 +149,6 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
             w.writeStringField("type", getClass().getCanonicalName());
             serializeCommonFields(w);
 
-            w.writeNumberField("fadeInDuration", fadeInDuration.toMillis());
-            w.writeNumberField("fadeOutDuration", fadeOutDuration.toMillis());
             w.writeNumberField("pan", pan);
             w.writeNumberField("pitch", pitch);
 
@@ -234,7 +202,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     }
 
     @Override
-    public void fadeIn()
+    public void fadeIn(Duration duration)
     {
         if(fadeTimeline != null)
         {
@@ -246,7 +214,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         // TODO: Fade to set volume
         fadeTimeline = new Timeline(
                 new KeyFrame(
-                        javafx.util.Duration.millis(fadeOutDuration.toMillis()),
+                        duration,
                         new KeyValue(backend.volumeProperty(), 1.0)
                 )
         );
@@ -256,7 +224,27 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     }
 
     @Override
-    public void fadeOut()
+    public void fadeTo(double value, Duration duration)
+    {
+        if(fadeTimeline != null)
+        {
+            fadeTimeline.stop();
+        }
+
+        // TODO: Fade to set volume
+        fadeTimeline = new Timeline(
+                new KeyFrame(
+                        duration,
+                        new KeyValue(backend.volumeProperty(), value)
+                )
+        );
+
+        if(!isPerformingAction()) backend.play();
+        fadeTimeline.play();
+    }
+
+    @Override
+    public void fadeOut(Duration duration)
     {
         if(fadeTimeline != null)
         {
@@ -265,7 +253,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 
         fadeTimeline = new Timeline(
                 new KeyFrame(
-                        javafx.util.Duration.seconds(3),
+                        duration,
                         new KeyValue(backend.volumeProperty(), 0.0)
                 )
         );

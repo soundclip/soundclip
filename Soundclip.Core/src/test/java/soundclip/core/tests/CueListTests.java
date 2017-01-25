@@ -14,7 +14,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.core.tests;
 
+import javafx.util.Duration;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
@@ -228,12 +230,14 @@ public class CueListTests
 
         CueList list = new CueList("MyCueList", new HashSet<>(Arrays.asList(a, b, c)));
 
-        list.panic(true);
+        list.panic(Duration.millis(1),true);
 
         verify(a, times(1)).stop();
         verify(b, times(1)).stop();
         verify(c, times(1)).stop();
-        verify(c, times(0)).fadeOut();
+
+        ArgumentCaptor<Duration> d = ArgumentCaptor.forClass(Duration.class);
+        verify(c, times(1)).fadeOut(d.capture());
     }
 
     @Test
@@ -249,12 +253,15 @@ public class CueListTests
 
         CueList list = new CueList("MyCueList", new HashSet<>(Arrays.asList(a, b, c)));
 
-        list.panic(false);
+        list.panic(Duration.millis(1), false);
 
         verify(a, times(1)).stop();
         verify(b, times(1)).stop();
         verify(c, times(0)).stop();
-        verify(c, times(1)).fadeOut();
+
+        ArgumentCaptor<Duration> d = ArgumentCaptor.forClass(Duration.class);
+        verify(c, times(1)).fadeOut(d.capture());
+        assertThat(d.getValue(), is(equalTo(Duration.millis(1))));
     }
 
     @Test

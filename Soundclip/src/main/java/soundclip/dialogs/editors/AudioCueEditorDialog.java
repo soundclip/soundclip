@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-package soundclip.dialogs;
+package soundclip.dialogs.editors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,11 +35,10 @@ import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.impl.FXAudioCue;
 
 import java.io.File;
-import java.util.Objects;
 
 
 /**
- * The editor for cues implementing {@link soundclip.core.cues.IAudioCue}
+ * The editor for cues implementing {@link soundclip.core.cues.IAudioCue}s
  */
 public class AudioCueEditorDialog extends BorderPane
 {
@@ -55,7 +54,7 @@ public class AudioCueEditorDialog extends BorderPane
 
     @FXML private TextField audioFilePath;
     @FXML private Slider panSlider, pitchSlider;
-    @FXML private TimePicker startOffset, endOffset, fadeInOver, fadeOutOver;
+    @FXML private TimePicker startOffset, endOffset;
 
     public AudioCueEditorDialog(CueNumber nextNumber)
     {
@@ -66,7 +65,7 @@ public class AudioCueEditorDialog extends BorderPane
 
     public AudioCueEditorDialog(IAudioCue cue)
     {
-        FXMLLoader fxmlLoader = Utils.load(this, "ui/dialogs/AudioCueEditorDialog.fxml");
+        FXMLLoader fxmlLoader = Utils.load(this, "ui/dialogs/editors/AudioCueEditorDialog.fxml");
 
         model = cue;
         commonEditor.setModel(model);
@@ -75,9 +74,6 @@ public class AudioCueEditorDialog extends BorderPane
 
         panSlider.setValue(model.getPan());
         pitchSlider.setValue(model.getPitch());
-
-        fadeInOver.setTime(model.getFadeInDuration());
-        fadeOutOver.setTime(model.getFadeOutDuration());
     }
 
     public void present()
@@ -139,9 +135,6 @@ public class AudioCueEditorDialog extends BorderPane
         model.setPitch(pitchSlider.getValue());
 
         // TODO: Start and end offsets
-
-        model.setFadeInDuration(fadeInOver.getTime());
-        model.setFadeOutDuration(fadeOutOver.getTime());
 
         dialog.close();
     }

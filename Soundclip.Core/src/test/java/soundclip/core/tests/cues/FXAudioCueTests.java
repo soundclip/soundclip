@@ -77,26 +77,6 @@ public class FXAudioCueTests
     }
 
     @Test
-    public void remembersFadeInDuration()
-    {
-        IFadeableCue cue = new FXAudioCue(new CueNumber(1));
-
-        cue.setFadeInDuration(Duration.seconds(1));
-
-        assertThat(cue.getFadeInDuration(), is(equalTo(Duration.seconds(1))));
-    }
-
-    @Test
-    public void remembersFadeOutDuration()
-    {
-        IFadeableCue cue = new FXAudioCue(new CueNumber(1));
-
-        cue.setFadeOutDuration(Duration.seconds(1));
-
-        assertThat(cue.getFadeOutDuration(), is(equalTo(Duration.seconds(1))));
-    }
-
-    @Test
     public void remembersPitch()
     {
         IPitchableCue cue = new FXAudioCue(new CueNumber(1));
