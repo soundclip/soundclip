@@ -211,6 +211,7 @@ public class Soundclip extends Application
         {
             globalSettings.setLastOpenProjectPath(this.currentProject.getPath());
             globalSettings.addRecentProject(this.currentProject);
+            globalSettings.setLastFileChooserDirectory(this.currentProject.getProjectLocation());
         }
 
         try

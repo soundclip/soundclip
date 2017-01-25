@@ -61,12 +61,11 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 
     public FXAudioCue(CueNumber number)
     {
+        super();
+
         setNumber(number);
-        setName("Untitled Audio Cue");
         fadeInDuration = Duration.ZERO;
         fadeOutDuration = Duration.ZERO;
-        setPreWaitDelay(Duration.ZERO);
-        setPostWaitDelay(Duration.ZERO);
     }
 
     @Override

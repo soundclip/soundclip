@@ -16,10 +16,13 @@ package soundclip.controls;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
 import soundclip.Utils;
+import soundclip.core.ProgressType;
 import soundclip.core.cues.ICue;
 
 /**
@@ -33,6 +36,8 @@ public class CommonCuePropertyEditor extends GridPane
     @FXML private TextArea notesEditor;
 
     @FXML private TimePicker preWaitDelay, postWaitDelay;
+
+    @FXML private ComboBox<String> progressType;
 
     public CommonCuePropertyEditor()
     {
@@ -48,6 +53,8 @@ public class CommonCuePropertyEditor extends GridPane
 
         preWaitDelay.setTime(model.getPreWaitDelay());
         postWaitDelay.setTime(model.getPostWaitDelay());
+
+        progressType.getSelectionModel().select(model.getProgressType().ordinal());
     }
 
     public void apply()
@@ -56,5 +63,6 @@ public class CommonCuePropertyEditor extends GridPane
         model.setNotes(notesEditor.getText());
         model.setPreWaitDelay(preWaitDelay.getTime());
         model.setPostWaitDelay(postWaitDelay.getTime());
+        model.setProgressType(ProgressType.fromOrdinal(progressType.getSelectionModel().getSelectedIndex()));
     }
 }

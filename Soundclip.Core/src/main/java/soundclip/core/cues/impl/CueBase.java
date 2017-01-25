@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import javafx.util.Duration;
 import soundclip.core.CueNumber;
+import soundclip.core.ProgressType;
 import soundclip.core.cues.ICue;
 
 import java.io.IOException;
@@ -33,6 +34,16 @@ public abstract class CueBase implements ICue
     private String notes;
     private Duration preWaitDelay;
     private Duration postWaitDelay;
+    private ProgressType progressType;
+
+    protected CueBase()
+    {
+        name = "Untitled Cue";
+        notes = "";
+        preWaitDelay = Duration.ZERO;
+        postWaitDelay = Duration.ZERO;
+        progressType = ProgressType.FOCUS;
+    }
 
     @Override
     public CueNumber getNumber()
@@ -101,6 +112,18 @@ public abstract class CueBase implements ICue
     }
 
     @Override
+    public ProgressType getProgressType()
+    {
+        return progressType;
+    }
+
+    @Override
+    public void setProgressType(ProgressType type)
+    {
+        progressType = type;
+    }
+
+    @Override
     public void pause()
     {
 
@@ -116,6 +139,11 @@ public abstract class CueBase implements ICue
     {
         setName(cue.get("name").asText());
         setNotes(cue.get("notes").asText(null));
+
+        if(cue.has("progressType"))
+        {
+            setProgressType(ProgressType.valueOf(cue.get("progressType").asText("FOCUS").toUpperCase()));
+        }
     }
 
     protected void serializeCommonFields(JsonGenerator w) throws IOException
@@ -123,5 +151,6 @@ public abstract class CueBase implements ICue
         w.writeStringField("name", getName());
         w.writeStringField("number", getNumber().toString());
         w.writeStringField("notes", getNotes());
+        w.writeStringField("progressType", getProgressType().toString());
     }
 }

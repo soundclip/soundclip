@@ -33,8 +33,8 @@ public class NoteCue extends CueBase
 
     public NoteCue(CueNumber number)
     {
+        super();
         setNumber(number);
-        setName("Untitled Notes Cue");
     }
 
     public NoteCue(CueNumber number, String name, String notes)

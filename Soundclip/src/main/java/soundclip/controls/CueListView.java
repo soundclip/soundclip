@@ -31,6 +31,7 @@ import soundclip.Soundclip;
 import soundclip.Utils;
 import soundclip.core.CueList;
 import soundclip.core.CueNumber;
+import soundclip.core.ProgressType;
 import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.impl.FXAudioCue;
@@ -252,7 +253,16 @@ public class CueListView extends Tab
         Log.debug("GO {} - {}", c.getNumber(), c.getName());
         c.go();
 
-        if(++i < model.size()) tableView.getSelectionModel().select(i);
+        boolean triggerNext = c.getProgressType() == ProgressType.TRIGGER;
+
+        if(++i < model.size() && c.getProgressType() != ProgressType.HOLD)
+        {
+            tableView.getSelectionModel().select(i);
+            if(triggerNext)
+            {
+                goNextCue();
+            }
+        }
     }
 
     public void focusPrevious() {

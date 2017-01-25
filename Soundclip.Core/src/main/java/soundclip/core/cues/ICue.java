@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import javafx.util.Duration;
 import soundclip.core.CueNumber;
 import soundclip.core.CueSupportFlags;
+import soundclip.core.ProgressType;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +38,11 @@ public interface ICue extends  IProgressProvider
 
     Duration getPostWaitDelay();
     void setPostWaitDelay(Duration delay);
+
+    /** Get the {@link ProgressType} for the cue */
+    ProgressType getProgressType();
+    /** Set the {@link ProgressType} for the cue */
+    void setProgressType(ProgressType type);
 
     /** @return the features supported by the cue. One or more of {@link CueSupportFlags} */
     int getSupportedOperations();
