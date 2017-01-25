@@ -237,7 +237,7 @@ public class CueListTests
         verify(c, times(1)).stop();
 
         ArgumentCaptor<Duration> d = ArgumentCaptor.forClass(Duration.class);
-        verify(c, times(1)).fadeOut(d.capture());
+        verify(c, times(0)).fadeOut(d.capture());
     }
 
     @Test
