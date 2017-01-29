@@ -120,11 +120,11 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         {
             backend.seek(backend.getStartTime());
             backend.stop();
+            backend.setVolume(1.0);
         }
         if(fadeTimeline != null)
         {
             fadeTimeline.stop();
-            backend.setVolume(1.0);
         }
     }
 
