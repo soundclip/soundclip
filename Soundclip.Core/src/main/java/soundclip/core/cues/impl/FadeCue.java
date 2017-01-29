@@ -185,7 +185,6 @@ public class FadeCue extends CueBase implements IPostLoadHook
     public void stop()
     {
         fadeTimeline.stop();
-        if(target != null) target.stop();
     }
 
     @Override

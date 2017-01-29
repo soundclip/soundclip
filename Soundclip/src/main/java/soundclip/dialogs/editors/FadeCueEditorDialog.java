@@ -70,6 +70,8 @@ public class FadeCueEditorDialog extends BorderPane
             if(!(cue instanceof IFadeableCue)) continue;
             fadeTarget.getItems().add((IFadeableCue)cue);
         }
+
+        fadeTarget.getSelectionModel().select(model.getTarget());
     }
 
     public void present()
