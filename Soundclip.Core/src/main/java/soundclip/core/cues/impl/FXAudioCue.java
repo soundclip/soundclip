@@ -16,6 +16,7 @@ package soundclip.core.cues.impl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -267,6 +268,12 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         });
 
         fadeTimeline.play();
+    }
+
+    @Override
+    public boolean isFading()
+    {
+        return fadeTimeline != null && fadeTimeline.getStatus() == Animation.Status.RUNNING;
     }
 
     @Override

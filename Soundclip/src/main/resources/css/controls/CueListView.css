@@ -17,6 +17,6 @@
     -fx-background-color: md-blue-800;
 }
 
-.cell-muted-text {
+.cell-muted-text .label{
     -fx-text-fill: md-grey-600;
 }

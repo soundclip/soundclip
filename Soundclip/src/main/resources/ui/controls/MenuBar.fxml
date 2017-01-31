@@ -15,7 +15,7 @@
     <right>
         <Button id="panic" onAction="#doPanic"/>
         <Separator orientation="VERTICAL"/>
-        <ToggleButton fx:id="lockWorkspace" onAction="#toggleWorkspaceLock"/>
+        <ToggleButton fx:id="lockWorkspace" />
         <MenuButton id="menu">
             <items>
                 <MenuItem fx:id="renumberCueListItem" text="Renumber CueList" onAction="#onRenumberCueList" />

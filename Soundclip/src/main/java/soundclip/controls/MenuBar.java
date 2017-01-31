@@ -62,6 +62,8 @@ public class MenuBar extends FXHeaderBar
         initAddItems(addItem.getItems());
         useLightIcons();
 
+        lockWorkspace.selectedProperty().bindBidirectional(Soundclip.Instance().workspaceLockedProperty());
+
         addItem.disableProperty().bind(Soundclip.Instance().workspaceLockedProperty());
         renumberCueListItem.disableProperty().bind(Soundclip.Instance().workspaceLockedProperty());
         renameCueListItem.disableProperty().bind(Soundclip.Instance().workspaceLockedProperty());
@@ -245,12 +247,6 @@ public class MenuBar extends FXHeaderBar
     {
         Project p = Soundclip.Instance().getCurrentProject();
         p.panic(new Date().getTime() - lastPanicTime.getTime() < p.getPanicHardStopBefore());
-    }
-
-    @FXML
-    protected void toggleWorkspaceLock(ActionEvent event)
-    {
-        Soundclip.Instance().setWorkspaceLocked(lockWorkspace.isSelected());
     }
 
     @FXML

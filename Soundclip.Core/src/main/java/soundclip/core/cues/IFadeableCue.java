@@ -24,4 +24,6 @@ public interface IFadeableCue extends ICue
 
     /** If the cue is currently playing, fade it out over the specified duration */
     void fadeOut(Duration duration);
+
+    boolean isFading();
 }

@@ -76,78 +76,9 @@ public class CueListView extends Tab
 
         tableView.setItems(model.getCues());
 
-        preWaitCell.setCellFactory(column -> new TableCell<ICue, Duration>(){
-            @Override
-            protected void updateItem(Duration item, boolean empty) {
-                super.updateItem(item, empty);
-                if(item != null && !empty){
-                    ICue model = getTableView().getItems().get(getIndex());
-                    if(item.greaterThan(Duration.ZERO)){
-                        setText(Utils.durationToString(item));
-
-                        double percent = 100 * (item.toMillis() / model.getPreWaitDelay().toMillis());
-                        setStyle("-fx-background-color: linear-gradient(" +
-                                "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                                "md-light-green-A700, md-light-green-A700 99.99%, transparent" +
-                                ");");
-                    }else{
-                        setText(Utils.durationToString(model.getPreWaitDelay()));
-                        setStyle("");
-                    }
-
-                }else{
-                    setText("");
-                }
-            }
-        });
-        actionCell.setCellFactory(cell -> new TableCell<ICue, Duration>(){
-            @Override
-            protected void updateItem(Duration item, boolean empty) {
-                super.updateItem(item, empty);
-                if(item != null && !empty){
-                    ICue model = getTableView().getItems().get(getIndex());
-
-                    if(model.isPerformingAction()){
-                        setText(Utils.durationToString(item));
-
-                        double percent = 100 * (item.toMillis() / model.getDuration().toMillis());
-                        setStyle("-fx-background-color: linear-gradient(" +
-                                "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                                "md-light-green-A700, md-light-green-A700 99.99%, transparent" +
-                                ");");
-                    }else{
-                        setText(Utils.durationToString(model.getDuration()));
-                        setStyle("");
-                    }
-                }else{
-                    setText("");
-                }
-            }
-        });
-        postWaitCell.setCellFactory(column -> new TableCell<ICue, Duration>(){
-            @Override
-            protected void updateItem(Duration item, boolean empty) {
-                super.updateItem(item, empty);
-                if(item != null && !empty){
-                    ICue model = getTableView().getItems().get(getIndex());
-
-                    if(item.greaterThan(Duration.ZERO)){
-                        setText(Utils.durationToString(item));
-
-                        double percent = 100 * (item.toMillis() / model.getPostWaitDelay().toMillis());
-                        setStyle("-fx-background-color: linear-gradient(" +
-                                "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                                "md-light-green-A700, md-light-green-A700 99.99%, transparent" +
-                                ");");
-                    }else{
-                        setText(Utils.durationToString(model.getPostWaitDelay()));
-                        setStyle("");
-                    }
-                }else{
-                    setText("");
-                }
-            }
-        });
+        preWaitCell.setCellFactory(column -> new ProgressCell());
+        actionCell.setCellFactory(cell -> new ProgressCell());
+        postWaitCell.setCellFactory(column -> new ProgressCell());
 
         tableView.setOnKeyReleased((e) -> {
             if((e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER) && Soundclip.Instance().isWorkspaceLocked())
@@ -159,6 +90,16 @@ public class CueListView extends Tab
             {
                 e.consume();
                 Soundclip.Instance().getCurrentProject().panic();
+            }
+            else if(e.getCode() == KeyCode.L && e.isControlDown() && !e.isShiftDown())
+            {
+                e.consume();
+                Soundclip.Instance().setWorkspaceLocked(true);
+            }
+            else if(e.getCode() == KeyCode.L && e.isControlDown() && e.isShiftDown())
+            {
+                e.consume();
+                Soundclip.Instance().setWorkspaceLocked(false);
             }
         });
 

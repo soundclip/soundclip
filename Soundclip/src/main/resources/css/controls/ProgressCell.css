@@ -1,0 +1,19 @@
+@import '/css/material-color.css';
+
+.progress-bar {
+    -fx-accent: md-light-green-A700;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-padding: 0px;
+}
+
+.progress-bar .track {
+    -fx-background-color: transparent;
+}
+
+.progress-bar .bar,
+.progress-bar .track{
+    -fx-padding: 0px;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 0;
+}
