@@ -41,6 +41,7 @@ public class Settings
     private String lastOpenProjectPath = "";
     private String lastFileChooserDirectory = "";
     private final HashMap<String,String> recentProjects = new HashMap<>();
+    private boolean progressCellsCountDown = true;
 
     public Settings()
     {
@@ -61,6 +62,11 @@ public class Settings
                     {
                         recentProjects.put(recentProject.get("path").asText(), recentProject.get("name").asText());
                     }
+                }
+
+                if(globalSettings.has("progressCellsCountDown"))
+                {
+                    progressCellsCountDown = globalSettings.get("progressCellsCountDown").asBoolean();
                 }
             }
             catch (IOException e)
@@ -104,6 +110,7 @@ public class Settings
                     }
                 }
                 writer.writeEndArray();
+                writer.writeBooleanField("progressCellsCountDown", progressCellsCountDown);
             }
             writer.writeEndObject();
         }
@@ -148,6 +155,17 @@ public class Settings
     public void removeRecentProject(String key)
     {
         recentProjects.remove(key);
+        saveSettings();
+    }
+
+    public boolean shouldProgressCellsCountDown()
+    {
+        return progressCellsCountDown;
+    }
+
+    public void setProgressCellsCountDown(boolean progressCellsCountDown)
+    {
+        this.progressCellsCountDown = progressCellsCountDown;
         saveSettings();
     }
 }

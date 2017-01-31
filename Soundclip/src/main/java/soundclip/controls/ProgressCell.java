@@ -21,6 +21,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import soundclip.Soundclip;
 import soundclip.Utils;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
@@ -68,7 +69,7 @@ public class ProgressCell extends TableCell<ICue, Duration>
             ICue model = getTableView().getItems().get(getIndex());
 
             if(model.isPerformingAction()){
-                elapsed.setText(Utils.durationToString(item));
+                elapsed.setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? model.getDuration().subtract(item) : item));
                 double percentComplete = item.toMillis() / model.getDuration().toMillis();
                 progress.setProgress(percentComplete);
                 if(model instanceof IFadeableCue && ((IFadeableCue)model).isFading())
