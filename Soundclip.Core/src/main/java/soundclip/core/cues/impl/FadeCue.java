@@ -176,6 +176,11 @@ public class FadeCue extends CueBase implements IPostLoadHook
     }
 
     @Override
+    public boolean isPaused() {
+        return fadeTimeline.getStatus() == Animation.Status.PAUSED;
+    }
+
+    @Override
     public void resume()
     {
         fadeTimeline.play();

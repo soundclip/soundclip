@@ -15,12 +15,13 @@
 package soundclip.controls;
 
 import com.google.common.io.Files;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
@@ -34,6 +35,7 @@ import soundclip.core.CueNumber;
 import soundclip.core.ProgressType;
 import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
+import soundclip.core.cues.IFadeableCue;
 import soundclip.core.cues.impl.FXAudioCue;
 import soundclip.core.cues.impl.FadeCue;
 import soundclip.core.cues.impl.NoteCue;
@@ -80,6 +82,18 @@ public class CueListView extends Tab
         actionCell.setCellFactory(cell -> new ProgressCell());
         postWaitCell.setCellFactory(column -> new ProgressCell());
 
+        tableView.setRowFactory(view -> {
+            final TableRow<ICue> row = new TableRow<>();
+
+            row.contextMenuProperty().bind(
+                Bindings.when(row.emptyProperty())
+                        .then((ContextMenu)null)
+                        .otherwise(new CueListContextMenu(row))
+            );
+
+            return row;
+        });
+
         tableView.setOnKeyReleased((e) -> {
             if((e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER) && Soundclip.Instance().isWorkspaceLocked())
             {
@@ -104,27 +118,13 @@ public class CueListView extends Tab
         });
 
         tableView.setOnMouseClicked((e) -> {
+            ICue c = getSelectedCue();
+            if(c == null) return;
+
             if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY && !Soundclip.Instance().isWorkspaceLocked())
             {
-                ICue c = getSelectedCue();
-                if(c == null) return;
-                if(c instanceof IAudioCue)
-                {
-                    new AudioCueEditorDialog((IAudioCue)c).present();
-                }
-                else if(c instanceof NoteCue)
-                {
-                    new NoteCueEditorDialog((NoteCue)c).present();
-                }
-                else if(c instanceof FadeCue)
-                {
-                    new FadeCueEditorDialog((FadeCue)c).present();
-                }
-                else
-                {
-                    Log.fatal("Encountered an unknown cue type: {}", c.getClass().getTypeName());
-                    return;
-                }
+                e.consume();
+                showEditorFor(c);
                 Soundclip.Instance().getController().getNotesPane().updateNotes(model.previous(c), c, model.next(c));
             }
         });
@@ -190,6 +190,26 @@ public class CueListView extends Tab
     }
 
     public int getSelectedIndex() { return tableView.getSelectionModel().getSelectedIndex(); }
+
+    public void showEditorFor(ICue c)
+    {
+        if(c instanceof IAudioCue)
+        {
+            new AudioCueEditorDialog((IAudioCue)c).present();
+        }
+        else if(c instanceof NoteCue)
+        {
+            new NoteCueEditorDialog((NoteCue)c).present();
+        }
+        else if(c instanceof FadeCue)
+        {
+            new FadeCueEditorDialog((FadeCue)c).present();
+        }
+        else
+        {
+            Log.fatal("Encountered an unknown cue type: {}", c.getClass().getTypeName());
+        }
+    }
 
     public void goNextCue() {
         if(!Soundclip.Instance().isWorkspaceLocked()) return;

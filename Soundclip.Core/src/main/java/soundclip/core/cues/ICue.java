@@ -54,6 +54,9 @@ public interface ICue extends  IProgressProvider
     /** @return A list of validation problems with the cue. Return an empty list if there are none */
     List<String> getValidationErrors();
 
+    /** @return True iff the cue is paused */
+    boolean isPaused();
+
     /** Triggers the main action of the cue */
     void go();
 

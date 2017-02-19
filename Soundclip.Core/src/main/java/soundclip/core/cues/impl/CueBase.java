@@ -139,6 +139,12 @@ public abstract class CueBase implements ICue
     }
 
     @Override
+    public boolean isPaused()
+    {
+        return false;
+    }
+
+    @Override
     public void resume()
     {
 
