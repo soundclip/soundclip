@@ -189,8 +189,16 @@ public class FadeCue extends CueBase implements IPostLoadHook
             {
                 if(preWaitTimeline != null)
                 {
+                    boolean wasInPreWait = isInPreWait();
+
                     preWaitTimeline.stop();
                     preWaitTimeline = null;
+
+                    if(wasInPreWait)
+                    {
+                        _go();
+                        return;
+                    }
                 }
 
                 preWaitTimeline = new Timeline(new KeyFrame(getPreWaitDelay()));
@@ -227,6 +235,16 @@ public class FadeCue extends CueBase implements IPostLoadHook
     public void stop()
     {
         fadeTimeline.stop();
+        if(preWaitTimeline != null)
+        {
+            preWaitTimeline.stop();
+            preWaitTimeline = null;
+        }
+        if(postWaitTimeline != null)
+        {
+            postWaitTimeline.stop();
+            postWaitTimeline = null;
+        }
     }
 
     @Override

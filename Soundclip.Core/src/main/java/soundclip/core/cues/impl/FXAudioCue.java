@@ -113,8 +113,16 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         {
             if(preWaitTimeline != null)
             {
+                boolean wasInPreWait = isInPreWait();
+
                 preWaitTimeline.stop();
                 preWaitTimeline = null;
+
+                if(wasInPreWait)
+                {
+                    _go();
+                    return;
+                }
             }
 
             preWaitTimeline = new Timeline(new KeyFrame(getPreWaitDelay()));
@@ -153,6 +161,16 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         if(fadeTimeline != null)
         {
             fadeTimeline.stop();
+        }
+        if(preWaitTimeline != null)
+        {
+            preWaitTimeline.stop();
+            preWaitTimeline = null;
+        }
+        if(postWaitTimeline != null)
+        {
+            postWaitTimeline.stop();
+            postWaitTimeline = null;
         }
     }
 
