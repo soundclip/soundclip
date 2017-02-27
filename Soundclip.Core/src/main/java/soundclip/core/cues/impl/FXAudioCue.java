@@ -53,8 +53,12 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     private String source;
     private Media backendSource;
     private MediaPlayer backend;
+    private SimpleObjectProperty<Duration> preWaitProgressWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
     private SimpleObjectProperty<Duration> progressPropertyWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
+    private SimpleObjectProperty<Duration> postWaitProgressWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
 
+    private Timeline preWaitTimeline;
+    private Timeline postWaitTimeline;
     private Timeline fadeTimeline;
     private String projectPath = null;
 
@@ -96,11 +100,32 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         return errors;
     }
 
-    @Override
-    public void go()
+    private void _go()
     {
         if(backend != null) backend.play();
         if(fadeTimeline != null && fadeTimeline.getStatus() == Animation.Status.PAUSED) fadeTimeline.play();
+    }
+
+    @Override
+    public void go()
+    {
+        if(getPreWaitDelay().greaterThan(Duration.ZERO))
+        {
+            if(preWaitTimeline != null)
+            {
+                preWaitTimeline.stop();
+                preWaitTimeline = null;
+            }
+
+            preWaitTimeline = new Timeline(new KeyFrame(getPreWaitDelay()));
+            preWaitTimeline.setOnFinished((e) -> _go());
+            preWaitProgressWrapper.bind(preWaitTimeline.currentTimeProperty());
+            preWaitTimeline.playFromStart();
+        }
+        else
+        {
+            _go();
+        }
     }
 
     @Override
@@ -163,14 +188,13 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     @Override
     public ReadOnlyObjectProperty<Duration> preWaitProgressProperty()
     {
-        // TODO: implement pre-wait
-        return new SimpleObjectProperty<>(Duration.ZERO);
+        return preWaitProgressWrapper;
     }
 
     @Override
     public Duration getPreWaitProgress()
     {
-        return Duration.ZERO;
+        return preWaitTimeline == null || preWaitTimeline.getStatus() != Animation.Status.RUNNING ? Duration.UNKNOWN : preWaitTimeline.getCurrentTime();
     }
 
     @Override
@@ -188,20 +212,31 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     @Override
     public ReadOnlyObjectProperty<Duration> postWaitProgressProperty()
     {
-        //TODO: Implement Post-Wait
-        return new SimpleObjectProperty<>(Duration.ZERO);
+        return postWaitProgressWrapper;
     }
 
     @Override
     public Duration getPostWaitProgress()
     {
-        return Duration.ZERO;
+        return postWaitTimeline == null || postWaitTimeline.getStatus() != Animation.Status.RUNNING ? Duration.UNKNOWN : postWaitTimeline.getCurrentTime();
+    }
+
+    @Override
+    public boolean isInPreWait()
+    {
+        return preWaitTimeline != null && (preWaitTimeline.getStatus() == Animation.Status.RUNNING || preWaitTimeline.getStatus() == Animation.Status.PAUSED);
     }
 
     @Override
     public boolean isPerformingAction()
     {
         return backend != null && (backend.getStatus() == MediaPlayer.Status.PLAYING || backend.getStatus() == MediaPlayer.Status.PAUSED);
+    }
+
+    @Override
+    public boolean isInPostWait()
+    {
+        return postWaitTimeline != null && (postWaitTimeline.getStatus() == Animation.Status.RUNNING || postWaitTimeline.getStatus() == Animation.Status.PAUSED);
     }
 
     @Override

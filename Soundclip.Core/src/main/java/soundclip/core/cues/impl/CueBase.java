@@ -133,6 +133,18 @@ public abstract class CueBase implements ICue
     }
 
     @Override
+    public boolean isInPreWait()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isInPostWait()
+    {
+        return false;
+    }
+
+    @Override
     public void pause()
     {
 
@@ -164,6 +176,16 @@ public abstract class CueBase implements ICue
         {
             setProgressType(ProgressType.valueOf(cue.get("progressType").asText("FOCUS").toUpperCase()));
         }
+
+        if(cue.has("preWaitDelay"))
+        {
+            setPreWaitDelay(Duration.millis(cue.get("preWaitDelay").asDouble()));
+        }
+
+        if(cue.has("postWaitDelay"))
+        {
+            setPostWaitDelay(Duration.millis(cue.get("postWaitDelay").asDouble()));
+        }
     }
 
     protected void serializeCommonFields(JsonGenerator w) throws IOException
@@ -173,6 +195,8 @@ public abstract class CueBase implements ICue
         w.writeStringField("number", getNumber().toString());
         w.writeStringField("notes", getNotes());
         w.writeStringField("progressType", getProgressType().toString());
+        w.writeNumberField("preWaitDelay", getPreWaitDelay().toMillis());
+        w.writeNumberField("postWaitDelay", getPostWaitDelay().toMillis());
     }
 
     @Override

@@ -27,6 +27,7 @@ import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 
 /**
@@ -36,16 +37,22 @@ public class ProgressCell extends TableCell<ICue, Duration>
 {
     private static final int PROGRESS_HEIGHT = 5;
 
+    private final Function<ICue, Duration> referenceSelector;
+    private final Function<ICue, Boolean> runningSelector;
+
     private final BorderPane root;
     private final Label elapsed;
     private final ProgressBar progress;
 
     private UUID modelGUID = null;
 
-    public ProgressCell()
+    public ProgressCell(Function<ICue, Duration> referenceSelector, Function<ICue, Boolean> runningSelector)
     {
         super();
         getStylesheets().add("/css/controls/ProgressCell.css");
+
+        this.referenceSelector = referenceSelector;
+        this.runningSelector = runningSelector;
 
         root = new BorderPane();
 
@@ -59,6 +66,28 @@ public class ProgressCell extends TableCell<ICue, Duration>
         progress.setPrefHeight(PROGRESS_HEIGHT);
         progress.setMaxHeight(PROGRESS_HEIGHT);
         root.setBottom(progress);
+
+        this.itemProperty().addListener((d) -> {
+            try
+            {
+                ICue model = getTableView().getItems().get(getIndex());
+                Duration reference = this.referenceSelector.apply(model);
+
+                if(reference.equals(Duration.UNKNOWN) || reference.equals(Duration.ZERO))
+                {
+                    getStyleClass().add("cell-muted-text");
+                }
+                else
+                {
+                    getStyleClass().removeAll("cell-muted-text");
+                }
+            }
+            catch(ArrayIndexOutOfBoundsException ignore)
+            {
+
+            }
+
+        });
     }
 
     @Override
@@ -67,10 +96,11 @@ public class ProgressCell extends TableCell<ICue, Duration>
         setText(null);
         if(item != null && !empty){
             ICue model = getTableView().getItems().get(getIndex());
+            Duration reference = referenceSelector.apply(model);
 
-            if(model.isPerformingAction()){
-                elapsed.setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? model.getDuration().subtract(item) : item));
-                double percentComplete = item.toMillis() / model.getDuration().toMillis();
+            if(runningSelector.apply(model)){
+                elapsed.setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? reference.subtract(item) : item));
+                double percentComplete = item.toMillis() / reference.toMillis();
                 progress.setProgress(percentComplete);
                 if(model instanceof IFadeableCue && ((IFadeableCue)model).isFading())
                 {
@@ -85,7 +115,7 @@ public class ProgressCell extends TableCell<ICue, Duration>
                     progress.setStyle("");
                 }
             }else{
-                elapsed.setText(Utils.durationToString(model.getDuration()));
+                elapsed.setText(Utils.durationToString(reference));
                 progress.setProgress(0.0d);
             }
 

@@ -23,17 +23,17 @@
                     <PropertyValueFactory property="name" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="preWaitCell" text="Pre" sortable="false" styleClass="centered-cell, cell-muted-text, text-outline" minWidth="80" maxWidth="80">
+            <TableColumn fx:id="preWaitCell" text="Pre" sortable="false" styleClass="centered-cell" minWidth="80" maxWidth="80">
                 <cellValueFactory>
                     <PropertyValueFactory property="preWaitProgress" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="actionCell" text="Action" sortable="false" styleClass="centered-cell, text-outline" minWidth="80" maxWidth="80">
+            <TableColumn fx:id="actionCell" text="Action" sortable="false" styleClass="centered-cell" minWidth="80" maxWidth="80">
                 <cellValueFactory>
                     <PropertyValueFactory property="progress" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="postWaitCell" text="Post" sortable="false" styleClass="centered-cell, cell-muted-text, text-outline" minWidth="80" maxWidth="80">
+            <TableColumn fx:id="postWaitCell" text="Post" sortable="false" styleClass="centered-cell" minWidth="80" maxWidth="80">
                 <cellValueFactory>
                     <PropertyValueFactory property="postWaitProgress" />
                 </cellValueFactory>

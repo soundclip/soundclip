@@ -17,5 +17,7 @@ public interface IProgressProvider
     ReadOnlyObjectProperty<Duration> postWaitProgressProperty();
     Duration getPostWaitProgress();
 
+    boolean isInPreWait();
     boolean isPerformingAction();
+    boolean isInPostWait();
 }

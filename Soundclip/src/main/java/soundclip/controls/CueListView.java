@@ -36,6 +36,7 @@ import soundclip.core.ProgressType;
 import soundclip.core.cues.IAudioCue;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
+import soundclip.core.cues.IProgressProvider;
 import soundclip.core.cues.impl.FXAudioCue;
 import soundclip.core.cues.impl.FadeCue;
 import soundclip.core.cues.impl.NoteCue;
@@ -78,9 +79,9 @@ public class CueListView extends Tab
 
         tableView.setItems(model.getCues());
 
-        preWaitCell.setCellFactory(column -> new ProgressCell());
-        actionCell.setCellFactory(cell -> new ProgressCell());
-        postWaitCell.setCellFactory(column -> new ProgressCell());
+        preWaitCell.setCellFactory(cell -> new ProgressCell(ICue::getPreWaitDelay, ICue::isInPreWait));
+        actionCell.setCellFactory(cell -> new ProgressCell(ICue::getDuration, ICue::isPerformingAction));
+        postWaitCell.setCellFactory(cell -> new ProgressCell(ICue::getPostWaitDelay, ICue::isInPostWait));
 
         tableView.setRowFactory(view -> {
             final TableRow<ICue> row = new TableRow<>();

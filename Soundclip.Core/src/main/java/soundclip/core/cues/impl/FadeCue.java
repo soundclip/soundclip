@@ -65,7 +65,13 @@ public class FadeCue extends CueBase implements IPostLoadHook
     private FadeType fadeType;
     private Duration fadeDuration;
     private double targetValue;
+
+    private SimpleObjectProperty<Duration> preWaitProgressWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
+    private SimpleObjectProperty<Duration> postWaitProgressWrapper = new SimpleObjectProperty<>(Duration.UNKNOWN);
+
+    private Timeline preWaitTimeline;
     private Timeline fadeTimeline;
+    private Timeline postWaitTimeline;
 
     private UUID targetGUID;
     private IFadeableCue target;
@@ -91,14 +97,13 @@ public class FadeCue extends CueBase implements IPostLoadHook
     @Override
     public ReadOnlyObjectProperty<Duration> preWaitProgressProperty()
     {
-        // TODO: implement pre-wait
-        return new SimpleObjectProperty<>(Duration.ZERO);
+        return preWaitProgressWrapper;
     }
 
     @Override
     public Duration getPreWaitProgress()
     {
-        return Duration.ZERO;
+        return preWaitTimeline == null || preWaitTimeline.getStatus() != Animation.Status.RUNNING ? Duration.UNKNOWN : preWaitTimeline.getCurrentTime();
     }
 
     @Override
@@ -116,20 +121,31 @@ public class FadeCue extends CueBase implements IPostLoadHook
     @Override
     public ReadOnlyObjectProperty<Duration> postWaitProgressProperty()
     {
-        //TODO: Implement Post-Wait
-        return new SimpleObjectProperty<>(Duration.ZERO);
+        return postWaitProgressWrapper;
     }
 
     @Override
     public Duration getPostWaitProgress()
     {
-        return Duration.ZERO;
+        return postWaitTimeline == null || postWaitTimeline.getStatus() != Animation.Status.RUNNING ? Duration.UNKNOWN : postWaitTimeline.getCurrentTime();
+    }
+
+    @Override
+    public boolean isInPreWait()
+    {
+        return preWaitTimeline != null && (preWaitTimeline.getStatus() == Animation.Status.RUNNING || preWaitTimeline.getStatus() == Animation.Status.PAUSED);
     }
 
     @Override
     public boolean isPerformingAction()
     {
         return fadeTimeline.getStatus() == Animation.Status.RUNNING;
+    }
+
+    @Override
+    public boolean isInPostWait()
+    {
+        return postWaitTimeline != null && (postWaitTimeline.getStatus() == Animation.Status.RUNNING || postWaitTimeline.getStatus() == Animation.Status.PAUSED);
     }
 
     @Override
@@ -151,19 +167,40 @@ public class FadeCue extends CueBase implements IPostLoadHook
         return CueSupportFlags.RESUME;
     }
 
+    private void _go()
+    {
+        fadeTimeline.playFromStart();
+        if(fadeType == FadeType.OUT)
+        {
+            target.fadeOut(fadeDuration);
+        }
+        else
+        {
+            target.fadeTo(targetValue, fadeDuration);
+        }
+    }
+
     @Override
     public void go()
     {
         if(target != null && target.isPerformingAction())
         {
-            fadeTimeline.playFromStart();
-            if(fadeType == FadeType.OUT)
+            if(getPreWaitProgress().greaterThan(Duration.ZERO))
             {
-                target.fadeOut(fadeDuration);
+                if(preWaitTimeline != null)
+                {
+                    preWaitTimeline.stop();
+                    preWaitTimeline = null;
+                }
+
+                preWaitTimeline = new Timeline(new KeyFrame(getPreWaitDelay()));
+                preWaitTimeline.setOnFinished(e -> _go());
+                preWaitProgressWrapper.bind(preWaitTimeline.currentTimeProperty());
+                preWaitTimeline.playFromStart();
             }
             else
             {
-                target.fadeTo(targetValue, fadeDuration);
+                _go();
             }
         }
 
@@ -210,12 +247,13 @@ public class FadeCue extends CueBase implements IPostLoadHook
         if(targetGUID == null)
         {
             Log.warn("No target set for cue {}", this);
+            return;
         }
 
         ICue c = p.resolveCue(targetGUID);
         if(!(c instanceof IFadeableCue))
         {
-            throw new IllegalArgumentException("The target of this cue does not implement IFadeableCue");
+            throw new IllegalArgumentException("The target of " + this.toString() + " does not implement IFadeableCue");
         }
 
         target = ((IFadeableCue)c);
