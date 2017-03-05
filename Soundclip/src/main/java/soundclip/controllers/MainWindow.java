@@ -26,6 +26,7 @@ import soundclip.controls.MenuBar;
 import soundclip.controls.NotesPane;
 import soundclip.core.CueList;
 import soundclip.core.Project;
+import soundclip.input.KeyManager;
 
 /**
  * The main application window
@@ -36,8 +37,12 @@ public class MainWindow extends BorderPane
     @FXML private NotesPane notesPane;
     @FXML private MenuBar menuBar;
 
+    private final KeyManager keyManager;
+
     public MainWindow()
     {
+        keyManager = new KeyManager(Soundclip.Instance().getGlobalSettings(), Soundclip.Instance());
+
         FXMLLoader fxmlLoader = Utils.load(this, "ui/MainWindow.fxml");
 
         Project project = Soundclip.Instance().getCurrentProject();
@@ -97,5 +102,30 @@ public class MainWindow extends BorderPane
     public MenuBar getMenuBar()
     {
         return menuBar;
+    }
+
+    public void focusNextList()
+    {
+        int index = cueStackContainer.getSelectionModel().getSelectedIndex();
+        if(index < cueStackContainer.getTabs().size())
+        {
+            cueStackContainer.getSelectionModel().select(index + 1);
+            ((CueListView)cueStackContainer.getSelectionModel().getSelectedItem()).focusList();
+        }
+    }
+
+    public void focusPreviousList()
+    {
+        int index = cueStackContainer.getSelectionModel().getSelectedIndex();
+        if(index > 0)
+        {
+            cueStackContainer.getSelectionModel().select(index - 1);
+            ((CueListView)cueStackContainer.getSelectionModel().getSelectedItem()).focusList();
+        }
+    }
+
+    public KeyManager getKeyManager()
+    {
+        return keyManager;
     }
 }

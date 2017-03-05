@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.core.Project;
+import soundclip.input.KeyMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class Settings
     private String lastFileChooserDirectory = "";
     private final HashMap<String,String> recentProjects = new HashMap<>();
     private boolean progressCellsCountDown = true;
+    private KeyMap keyMap = new KeyMap(null);
 
     public Settings()
     {
@@ -68,6 +70,11 @@ public class Settings
                 {
                     progressCellsCountDown = globalSettings.get("progressCellsCountDown").asBoolean();
                 }
+
+                if(globalSettings.has("keyMap"))
+                {
+                    keyMap = new KeyMap(globalSettings.get("keyMap"));
+                }
             }
             catch (IOException e)
             {
@@ -84,7 +91,7 @@ public class Settings
         }
     }
 
-    private void saveSettings()
+    public void save()
     {
         ObjectMapper m = new ObjectMapper();
         JsonFactory f = m.getFactory();
@@ -111,6 +118,7 @@ public class Settings
                 }
                 writer.writeEndArray();
                 writer.writeBooleanField("progressCellsCountDown", progressCellsCountDown);
+                keyMap.save(writer);
             }
             writer.writeEndObject();
         }
@@ -128,7 +136,7 @@ public class Settings
     public void setLastOpenProjectPath(String lastOpenProjectPath)
     {
         this.lastOpenProjectPath = lastOpenProjectPath;
-        saveSettings();
+        save();
     }
 
     public String getLastFileChooserDirectory()
@@ -139,7 +147,7 @@ public class Settings
     public void setLastFileChooserDirectory(String lastFileChooserDirectory)
     {
         this.lastFileChooserDirectory = lastFileChooserDirectory;
-        saveSettings();
+        save();
     }
 
     public Map<String, String> getRecentProjects()
@@ -155,7 +163,7 @@ public class Settings
     public void removeRecentProject(String key)
     {
         recentProjects.remove(key);
-        saveSettings();
+        save();
     }
 
     public boolean shouldProgressCellsCountDown()
@@ -166,6 +174,11 @@ public class Settings
     public void setProgressCellsCountDown(boolean progressCellsCountDown)
     {
         this.progressCellsCountDown = progressCellsCountDown;
-        saveSettings();
+        save();
+    }
+
+    public KeyMap getKeyMap()
+    {
+        return keyMap;
     }
 }

@@ -95,28 +95,7 @@ public class CueListView extends Tab
             return row;
         });
 
-        tableView.setOnKeyReleased((e) -> {
-            if((e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER) && Soundclip.Instance().isWorkspaceLocked())
-            {
-                e.consume();
-                goNextCue();
-            }
-            else if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.BACK_SPACE)
-            {
-                e.consume();
-                Soundclip.Instance().getCurrentProject().panic();
-            }
-            else if(e.getCode() == KeyCode.L && e.isControlDown() && !e.isShiftDown())
-            {
-                e.consume();
-                Soundclip.Instance().setWorkspaceLocked(true);
-            }
-            else if(e.getCode() == KeyCode.L && e.isControlDown() && e.isShiftDown())
-            {
-                e.consume();
-                Soundclip.Instance().setWorkspaceLocked(false);
-            }
-        });
+        tableView.setOnKeyReleased(e -> Soundclip.Instance().getController().getKeyManager().Check(e));
 
         tableView.setOnMouseClicked((e) -> {
             ICue c = getSelectedCue();
@@ -258,5 +237,10 @@ public class CueListView extends Tab
         if(selectedCue == null || model.indexOf(selectedCue) == model.size() - 1 ) return new CueNumber(model.last().getNumber().getMajorNumber() + 1);
 
         return new CueNumber(selectedCue.getNumber(), 5);
+    }
+
+    public void focusList()
+    {
+        tableView.requestFocus();
     }
 }

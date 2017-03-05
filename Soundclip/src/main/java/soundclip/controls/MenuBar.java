@@ -110,7 +110,7 @@ public class MenuBar extends FXHeaderBar
 
         if(p.getPath() == null || p.isDirty())
         {
-            Log.debug("TODO: Save currently open project");
+            Log.debug("TODO: save currently open project");
         }
 
         FileChooser fc = new FileChooser();
