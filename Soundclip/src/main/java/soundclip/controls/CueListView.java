@@ -95,8 +95,6 @@ public class CueListView extends Tab
             return row;
         });
 
-        tableView.setOnKeyReleased(e -> Soundclip.Instance().getController().getKeyManager().Check(e));
-
         tableView.setOnMouseClicked((e) -> {
             ICue c = getSelectedCue();
             if(c == null) return;

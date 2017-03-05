@@ -15,6 +15,7 @@
 package soundclip.controllers;
 
 import javafx.scene.control.Tab;
+import javafx.scene.input.KeyEvent;
 import soundclip.Soundclip;
 import soundclip.Utils;
 import javafx.fxml.FXML;
@@ -49,6 +50,9 @@ public class MainWindow extends BorderPane
 
         init(project);
         Soundclip.Instance().onProjectChanged.whenTriggered(this::init);
+
+        addEventFilter(KeyEvent.KEY_PRESSED, KeyEvent::consume);
+        addEventFilter(KeyEvent.KEY_RELEASED, keyManager::Check);
     }
 
     private void init(Project project)
