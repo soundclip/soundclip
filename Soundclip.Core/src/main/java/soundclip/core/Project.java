@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Duration;
+import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import soundclip.core.cues.ICue;
@@ -58,6 +59,9 @@ public class Project implements Iterable<CueList>, AutoCloseable
     private long lastPanicAt = 0;
 
     private final ArrayList<CueList> cueLists;
+
+    /** A signal triggered when panic is triggered */
+    public final Signal<Pair<Duration, Boolean>> onPanic = new Signal<>();
 
     /** A signal triggered when the project name is changed */
     public final Signal<String> onRenamed = new Signal<>();
@@ -213,8 +217,11 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public void panic()
     {
         long now = System.currentTimeMillis();
-        panic(now - lastPanicAt <= getPanicHardStopBefore());
+        boolean hard = now - lastPanicAt <= getPanicHardStopBefore();
+        onPanic.post(new Pair<>(Duration.millis(panicHardStopBefore), hard));
+        panic(hard);
         lastPanicAt = now;
+
     }
 
     /** Panic all cues. If {@param hard} is {@code true}, don't fade out gracefully */

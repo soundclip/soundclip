@@ -14,6 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controls;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,6 +24,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import me.nlowe.fxheaderbar.FXHeaderBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,8 +53,11 @@ public class MenuBar extends FXHeaderBar
     @FXML private MenuItem renumberCueListItem;
     @FXML private MenuItem renameCueListItem;
     @FXML private ToggleButton lockWorkspace;
+    @FXML private Button panic;
 
     private Date lastPanicTime = Date.from(Instant.EPOCH);
+
+    private Timeline panicIndicator;
 
     public MenuBar(){
         FXMLLoader fxmlLoader = Utils.load(this, "ui/controls/MenuBar.fxml");
@@ -76,6 +82,8 @@ public class MenuBar extends FXHeaderBar
 
         setSubtitle(p.getPath() == null ? "Not Saved" : p.getPath());
         p.onPathSet.whenTriggered(this::setSubtitle);
+
+        p.onPanic.whenTriggered(e -> indicatePanic(e.getKey(), e.getValue()));
     }
 
     private void initAddItems(ObservableList<MenuItem> i)
@@ -101,6 +109,31 @@ public class MenuBar extends FXHeaderBar
         addCueList.setOnAction(this::doAddCueList);
         addCueList.getStyleClass().add("add-cue-list");
         i.add(addCueList);
+    }
+
+    private void indicatePanic(Duration d, boolean hard)
+    {
+        if(panicIndicator != null)
+        {
+            panicIndicator.stop();
+            panic.getStyleClass().remove("outline");
+        }
+        if(!hard)
+        {
+            panic.getStyleClass().add("outline");
+            panicIndicator = new Timeline(
+                    new KeyFrame(Duration.seconds(0.25), (e) -> {
+                        panic.getStyleClass().remove("outline");
+                    }),
+                    new KeyFrame(Duration.seconds(0.5), (e) -> {
+                        panic.getStyleClass().add("outline");
+                    })
+            );
+            panicIndicator.setOnFinished((e) -> panic.getStyleClass().remove("outline"));
+            panicIndicator.setCycleCount((int) (d.toSeconds() * 2));
+            panicIndicator.play();
+        }
+
     }
 
     @FXML

@@ -1,3 +1,5 @@
+@import '/css/material-color.css';
+
 #openProject {
     -fx-graphic: url('/img/ic_folder_open_white_24dp_1x.png');
 }
@@ -31,7 +33,11 @@
 }
 
 #panic {
-    -fx-graphic: url('/img/ic_warning_white_24dp_1x.png')
+    -fx-graphic: url('/img/ic_warning_white_24dp_1x.png');
+}
+
+#panic.outline {
+    -fx-background-color: md-amber-A700;
 }
 
 #lockWorkspace {

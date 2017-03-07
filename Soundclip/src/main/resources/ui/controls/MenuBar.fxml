@@ -13,7 +13,7 @@
     </left>
 
     <right>
-        <Button id="panic" onAction="#doPanic"/>
+        <Button fx:id="panic" onAction="#doPanic"/>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="lockWorkspace" />
         <MenuButton id="menu">
