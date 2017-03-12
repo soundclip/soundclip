@@ -4,11 +4,16 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <fx:root xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
          stylesheets="/css/controls/NotesPane.css"
          styleClass="notes"
          type="soundclip.controls.NotesPane"
          minWidth="200" prefWidth="200">
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" />
+    </columnConstraints>
 
     <rowConstraints>
         <RowConstraints vgrow="NEVER" />
@@ -20,11 +25,11 @@
     </rowConstraints>
 
     <Label text="Previous Cue" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.halignment="CENTER" />
-    <TextArea fx:id="previousNotes" GridPane.columnIndex="0" GridPane.rowIndex="1" editable="false"/>
+    <TextArea fx:id="previousNotes" GridPane.columnIndex="0" GridPane.rowIndex="1" editable="false" wrapText="true"/>
 
     <Label text="Current Cue" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.halignment="CENTER" />
-    <TextArea fx:id="currentNotes" GridPane.columnIndex="0" GridPane.rowIndex="3" editable="false"/>
+    <TextArea fx:id="currentNotes" GridPane.columnIndex="0" GridPane.rowIndex="3" editable="false" wrapText="true"/>
 
     <Label text="On Deck Cue" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.halignment="CENTER" />
-    <TextArea fx:id="onDeckNotes" GridPane.columnIndex="0" GridPane.rowIndex="5" editable="false"/>
+    <TextArea fx:id="onDeckNotes" GridPane.columnIndex="0" GridPane.rowIndex="5" editable="false" wrapText="true"/>
 </fx:root>

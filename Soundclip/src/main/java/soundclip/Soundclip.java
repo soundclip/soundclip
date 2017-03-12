@@ -100,7 +100,6 @@ public class Soundclip extends Application
             primaryController = new MainWindow();
             primaryStage.setScene(new Scene(primaryController, 800, 600));
             primaryController.getMenuBar().syncToStage(primaryStage);
-
             primaryStage.show();
         }
     }

@@ -4,3 +4,9 @@
     -fx-border-color: md-grey-900;
     -fx-border-width: 1;
 }
+
+.notes > TextArea {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-font-family: monospace;
+}
