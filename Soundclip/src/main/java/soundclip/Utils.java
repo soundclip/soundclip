@@ -43,7 +43,7 @@ public class Utils
 
     public static String durationToString(Duration duration){
         if(duration == null || duration.lessThanOrEqualTo(Duration.ZERO) || duration.equals(Duration.UNKNOWN)){
-            return "00:00.000";
+            return "00:00.00";
         }else{
             double millis = duration.toMillis();
 
@@ -51,7 +51,7 @@ public class Utils
             millis %= 60000;
 
             double seconds =(millis / 1000);
-            return String.format("%02d:%06.3f", minutes, seconds);
+            return String.format("%02d:%05.2f", minutes, seconds);
         }
     }
 }

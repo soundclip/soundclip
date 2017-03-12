@@ -14,19 +14,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controls;
 
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import soundclip.Soundclip;
 import soundclip.Utils;
 import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
 
-import java.util.UUID;
 import java.util.function.Function;
 
 
@@ -35,37 +29,16 @@ import java.util.function.Function;
  */
 public class ProgressCell extends TableCell<ICue, Duration>
 {
-    private static final int PROGRESS_HEIGHT = 5;
-
     private final Function<ICue, Duration> referenceSelector;
     private final Function<ICue, Boolean> runningSelector;
-
-    private final BorderPane root;
-    private final Label elapsed;
-    private final ProgressBar progress;
-
-    private UUID modelGUID = null;
 
     public ProgressCell(Function<ICue, Duration> referenceSelector, Function<ICue, Boolean> runningSelector)
     {
         super();
-        getStylesheets().add("/css/controls/ProgressCell.css");
+        getStyleClass().add("progress-cell");
 
         this.referenceSelector = referenceSelector;
         this.runningSelector = runningSelector;
-
-        root = new BorderPane();
-
-        elapsed = new Label();
-        elapsed.setAlignment(Pos.CENTER);
-        elapsed.setTextAlignment(TextAlignment.CENTER);
-        root.setCenter(elapsed);
-
-        progress = new ProgressBar();
-        progress.setMinHeight(PROGRESS_HEIGHT);
-        progress.setPrefHeight(PROGRESS_HEIGHT);
-        progress.setMaxHeight(PROGRESS_HEIGHT);
-        root.setBottom(progress);
 
         this.itemProperty().addListener((d) -> {
             try
@@ -94,38 +67,42 @@ public class ProgressCell extends TableCell<ICue, Duration>
     protected void updateItem(Duration item, boolean empty) {
         super.updateItem(item, empty);
         setText(null);
-        if(item != null && !empty){
+        if(item != null && !empty && getIndex() < getTableView().getItems().size()){
             ICue model = getTableView().getItems().get(getIndex());
             Duration reference = referenceSelector.apply(model);
 
             if(runningSelector.apply(model)){
-                elapsed.setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? reference.subtract(item) : item));
-                double percentComplete = item.toMillis() / reference.toMillis();
-                progress.setProgress(percentComplete);
+                setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? reference.subtract(item) : item));
+                double percentComplete = 100 * (item.toMillis() / reference.toMillis());
                 if(model instanceof IFadeableCue && ((IFadeableCue)model).isFading())
                 {
-                    progress.setStyle("-fx-accent: md-orange-A700;");
+                    setProgress(percentComplete, "md-orange-800", "md-orange-A700");
                 }
-                else if(percentComplete > 0.75)
+                else if(percentComplete > 75.0)
                 {
-                    progress.setStyle("-fx-accent: md-yellow-A700;");
+                    setProgress(percentComplete, "md-yellow-800", "md-yellow-A700");
                 }
                 else
                 {
-                    progress.setStyle("");
+                    setProgress(percentComplete, "md-green-800", "md-green-A700");
                 }
             }else{
-                elapsed.setText(Utils.durationToString(reference));
-                progress.setProgress(0.0d);
+                setText(Utils.durationToString(reference));
+                setStyle("");
             }
-
-            if(modelGUID == null || !modelGUID.equals(model.getGUID()))
-            {
-                setGraphic(root);
-                modelGUID = model.getGUID();
-            }
-        }else{
-            setGraphic(null);
         }
+    }
+
+    private void setProgress(double percent, String color, String accent)
+    {
+        setStyle(
+            "-fx-background-color: linear-gradient(" +
+                 "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
+                 color + ", " + color + " 99.99%, transparent" +
+            ");" +
+            "-fx-padding: -2px -2px 0px -2px;" +
+            "-fx-border-color: " + accent + ";" +
+            "-fx-border-width: 2px;"
+        );
     }
 }

@@ -6,6 +6,8 @@
 An open source, sound cue management system for theatre.
 Still a very early WIP.
 
+![](doc/screenshot.png)
+
 ## Supported Media Types
 Currently, we're using the JavaFX Media API for playback.
 The following file types are supported:

@@ -17,6 +17,10 @@
     -fx-background-color: md-blue-800;
 }
 
-.cell-muted-text .label{
+.progress-cell {
+    /*-fx-font-weight: bold;*/
+}
+
+.cell-muted-text {
     -fx-text-fill: md-grey-600;
 }
