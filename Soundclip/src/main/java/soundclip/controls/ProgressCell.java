@@ -14,7 +14,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package soundclip.controls;
 
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import soundclip.Soundclip;
 import soundclip.Utils;
@@ -22,7 +26,6 @@ import soundclip.core.cues.ICue;
 import soundclip.core.cues.IFadeableCue;
 
 import java.util.function.Function;
-
 
 /**
  * A table cell for rendering progress
@@ -32,10 +35,38 @@ public class ProgressCell extends TableCell<ICue, Duration>
     private final Function<ICue, Duration> referenceSelector;
     private final Function<ICue, Boolean> runningSelector;
 
+    private final AnchorPane rootWrapper;
+    private final ProgressBar progress;
+    private final Text label;
+
     public ProgressCell(Function<ICue, Duration> referenceSelector, Function<ICue, Boolean> runningSelector)
     {
         super();
+        getStylesheets().add("/css/controls/ProgressCell.css");
         getStyleClass().add("progress-cell");
+
+        StackPane root = new StackPane();
+
+        progress = new ProgressBar();
+        AnchorPane progressContainer = new AnchorPane();
+        AnchorPane.setLeftAnchor(progress, 0.0);
+        AnchorPane.setRightAnchor(progress, 0.0);
+        AnchorPane.setTopAnchor(progress, -2.0);
+        AnchorPane.setBottomAnchor(progress, -2.0);
+        progressContainer.getChildren().add(progress);
+        root.getChildren().add(progressContainer);
+
+        label = new Text(Utils.durationToString(Duration.ZERO));
+        label.getStyleClass().add("progress-label");
+        root.getChildren().add(label);
+
+        rootWrapper = new AnchorPane();
+        AnchorPane.setLeftAnchor(root, 0.0);
+        AnchorPane.setRightAnchor(root, 0.0);
+        AnchorPane.setTopAnchor(root, -2.0);
+        AnchorPane.setBottomAnchor(root, -2.0);
+        rootWrapper.getChildren().add(root);
+        setGraphic(rootWrapper);
 
         this.referenceSelector = referenceSelector;
         this.runningSelector = runningSelector;
@@ -48,11 +79,11 @@ public class ProgressCell extends TableCell<ICue, Duration>
 
                 if(reference.equals(Duration.UNKNOWN) || reference.equals(Duration.ZERO))
                 {
-                    getStyleClass().add("cell-muted-text");
+                    label.getStyleClass().add("cell-muted-text");
                 }
                 else
                 {
-                    getStyleClass().removeAll("cell-muted-text");
+                    label.getStyleClass().removeAll("cell-muted-text");
                 }
             }
             catch(ArrayIndexOutOfBoundsException ignore)
@@ -68,41 +99,50 @@ public class ProgressCell extends TableCell<ICue, Duration>
         super.updateItem(item, empty);
         setText(null);
         if(item != null && !empty && getIndex() < getTableView().getItems().size()){
+            rootWrapper.setVisible(true);
             ICue model = getTableView().getItems().get(getIndex());
             Duration reference = referenceSelector.apply(model);
 
             if(runningSelector.apply(model)){
-                setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? reference.subtract(item) : item));
-                double percentComplete = 100 * (item.toMillis() / reference.toMillis());
+                label.setText(Utils.durationToString(Soundclip.Instance().getGlobalSettings().shouldProgressCellsCountDown() ? reference.subtract(item) : item));
+                double percentComplete = item.toMillis() / reference.toMillis();
                 if(model instanceof IFadeableCue && ((IFadeableCue)model).isFading())
                 {
-                    setProgress(percentComplete, "md-orange-800", "md-orange-A700");
+                    progress.setProgress(percentComplete);
+                    progress.setStyle(
+                        "-fx-accent: md-orange-800;" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-border-color: md-orange-A700;"
+                    );
                 }
-                else if(percentComplete > 75.0)
+                else if(percentComplete > 0.75)
                 {
-                    setProgress(percentComplete, "md-yellow-800", "md-yellow-A700");
+                    progress.setProgress(percentComplete);
+                    progress.setStyle(
+                        "-fx-accent: md-yellow-800;" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-border-color: md-yellow-A700;"
+                    );
+
                 }
                 else
                 {
-                    setProgress(percentComplete, "md-green-800", "md-green-A700");
+                    progress.setProgress(percentComplete);
+                    progress.setStyle(
+                        "-fx-accent: md-green-800;" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-border-color: md-green-A700;"
+                    );
                 }
             }else{
-                setText(Utils.durationToString(reference));
-                setStyle("");
+                label.setText(Utils.durationToString(reference));
+                progress.setProgress(0.0);
+                progress.setStyle("");
             }
         }
-    }
-
-    private void setProgress(double percent, String color, String accent)
-    {
-        setStyle(
-            "-fx-background-color: linear-gradient(" +
-                 "from 0% 100% to " + String.format("%.3f", percent) +"% 100%, " +
-                 color + ", " + color + " 99.99%, transparent" +
-            ");" +
-            "-fx-padding: -2px -2px 0px -2px;" +
-            "-fx-border-color: " + accent + ";" +
-            "-fx-border-width: 2px;"
-        );
+        else
+        {
+            rootWrapper.setVisible(false);
+        }
     }
 }

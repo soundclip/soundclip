@@ -1,0 +1,27 @@
+@import '/css/material-color.css';
+
+.progress-bar {
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-padding: 0px;
+}
+
+.progress-bar .track {
+    -fx-background-color: transparent;
+}
+
+.progress-bar .bar,
+.progress-bar .track{
+    -fx-padding: 0px;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 0;
+}
+
+.progress-label {
+    -fx-fill: md-grey-200;
+    -fx-font-weight: bold;
+}
+
+.cell-muted-text {
+    -fx-fill: md-grey-600;
+}

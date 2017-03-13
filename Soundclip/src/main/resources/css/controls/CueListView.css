@@ -16,11 +16,3 @@
 .table-row-cell:selected {
     -fx-background-color: md-blue-800;
 }
-
-.progress-cell {
-    /*-fx-font-weight: bold;*/
-}
-
-.cell-muted-text {
-    -fx-text-fill: md-grey-600;
-}
