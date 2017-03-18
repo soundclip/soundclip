@@ -216,6 +216,7 @@ public class CueListView extends Tab
         if(i >= getModel().size() -1 ) i = getModel().size() - 1;
 
         tableView.getSelectionModel().select(i);
+        tableView.scrollTo(i);
     }
 
     public void focusNext()
@@ -225,6 +226,7 @@ public class CueListView extends Tab
         if(i >= getModel().size() -1 ) i = getModel().size() - 1;
 
         tableView.getSelectionModel().select(i);
+        tableView.scrollTo(i);
     }
 
     public CueNumber getNextCueNumber()
