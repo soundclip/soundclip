@@ -30,6 +30,9 @@ Simply invoke maven to build all the things:
 mvn package
 ```
 
+This will generate `Soundclip-<version>-jar-with-dependencies.jar` in `Soundclip/target`
+for you to run.
+
 ## License
 Copyright (C) 2016  Nathan Lowe
 
