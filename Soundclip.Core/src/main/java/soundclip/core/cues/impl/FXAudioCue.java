@@ -102,8 +102,11 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
 
     private void _go()
     {
-        if(backend != null) backend.play();
-        if(fadeTimeline != null && fadeTimeline.getStatus() == Animation.Status.PAUSED) fadeTimeline.play();
+        boolean isInPreWait = preWaitTimeline != null && preWaitTimeline.getStatus() == Animation.Status.PAUSED;
+
+        if(isInPreWait) preWaitTimeline.play();
+        if(!isInPreWait && backend != null) backend.play();
+        if(isFading()) fadeTimeline.play();
     }
 
     @Override
@@ -146,7 +149,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     @Override
     public void resume()
     {
-        if(backend != null) backend.play();
+        _go();
     }
 
     @Override
@@ -334,7 +337,7 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
     @Override
     public boolean isFading()
     {
-        return fadeTimeline != null && fadeTimeline.getStatus() == Animation.Status.RUNNING;
+        return fadeTimeline != null && (fadeTimeline.getStatus() == Animation.Status.RUNNING || fadeTimeline.getStatus() == Animation.Status.PAUSED);
     }
 
     @Override

@@ -45,6 +45,11 @@ public class KeyManager
             e.consume();
             instance.getActiveCueListView().ifPresent(CueListView::goNextCue);
         }
+        else if(keys.getTogglePauseKeys().stream().anyMatch(k -> k.match(e)))
+        {
+            e.consume();
+            instance.getCurrentProject().toggleTransport();
+        }
         else if(keys.getPanicKeys().stream().anyMatch(k -> k.match(e)))
         {
             e.consume();

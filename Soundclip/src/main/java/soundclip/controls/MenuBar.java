@@ -53,11 +53,13 @@ public class MenuBar extends FXHeaderBar
     @FXML private MenuItem renumberCueListItem;
     @FXML private MenuItem renameCueListItem;
     @FXML private ToggleButton lockWorkspace;
+    @FXML private Button pause;
     @FXML private Button panic;
 
     private Date lastPanicTime = Date.from(Instant.EPOCH);
 
     private Timeline panicIndicator;
+    private Timeline pauseIndicator;
 
     public MenuBar(){
         FXMLLoader fxmlLoader = Utils.load(this, "ui/controls/MenuBar.fxml");
@@ -84,6 +86,28 @@ public class MenuBar extends FXHeaderBar
         p.onPathSet.whenTriggered(this::setSubtitle);
 
         p.onPanic.whenTriggered(e -> indicatePanic(e.getKey(), e.getValue()));
+
+        p.pauseTransportPropertyProperty().addListener((prop, oldValue, newValue) -> {
+            if(pauseIndicator != null)
+            {
+                pauseIndicator.stop();
+                pause.getStyleClass().removeAll("outline");
+            }
+            if(newValue)
+            {
+                pause.getStyleClass().add("outline");
+                pauseIndicator = new Timeline(
+                        new KeyFrame(Duration.seconds(0.5), (e) -> {
+                            pause.getStyleClass().remove("outline");
+                        }),
+                        new KeyFrame(Duration.seconds(1), (e) -> {
+                            pause.getStyleClass().add("outline");
+                        })
+                );
+                pauseIndicator.setCycleCount(Timeline.INDEFINITE);
+                pauseIndicator.play();
+            }
+        });
     }
 
     private void initAddItems(ObservableList<MenuItem> i)
@@ -133,7 +157,6 @@ public class MenuBar extends FXHeaderBar
             panicIndicator.setCycleCount((int) (d.toSeconds() * 2));
             panicIndicator.play();
         }
-
     }
 
     @FXML
@@ -273,6 +296,12 @@ public class MenuBar extends FXHeaderBar
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> Soundclip.Instance().getCurrentProject().appendCueList(name));
+    }
+
+    @FXML
+    protected void doPause(ActionEvent event)
+    {
+        Soundclip.Instance().getCurrentProject().toggleTransport();
     }
 
     @FXML

@@ -30,6 +30,7 @@ public class KeyMap
 {
     // Transport
     private final List<KeyCombination> goKeys = new LinkedList<>();
+    private final List<KeyCombination> togglePauseKeys = new LinkedList<>();
     private final List<KeyCombination> panicKeys = new LinkedList<>();
     private final List<KeyCombination> fadeOutKeys = new LinkedList<>();
     
@@ -46,55 +47,54 @@ public class KeyMap
     
     public KeyMap(JsonNode node)
     {
-        if(node == null)
-        {
-            Collections.addAll(goKeys,
+        Collections.addAll(goKeys,
                 new KeyCombination(KeyCode.SPACE),
                 new KeyCombination(KeyCode.NUMPAD0)
-            );
+        );
+        togglePauseKeys.add(new KeyCombination(KeyCode.TAB));
+        panicKeys.add(new KeyCombination(KeyCode.ESCAPE));
+        fadeOutKeys.add(new KeyCombination(KeyCode.BACK_SPACE));
 
-            panicKeys.add(new KeyCombination(KeyCode.ESCAPE));
-            fadeOutKeys.add(new KeyCombination(KeyCode.BACK_SPACE));
-
-            Collections.addAll(focusNextCue,
+        Collections.addAll(focusNextCue,
                 new KeyCombination(KeyCode.DOWN),
                 new KeyCombination(KeyCode.RIGHT),
                 new KeyCombination(KeyCode.NUMPAD2),
                 new KeyCombination(KeyCode.NUMPAD6)
-            );
-            Collections.addAll(focusPreviousCue,
+        );
+        Collections.addAll(focusPreviousCue,
                 new KeyCombination(KeyCode.UP),
                 new KeyCombination(KeyCode.LEFT),
                 new KeyCombination(KeyCode.NUMPAD8),
                 new KeyCombination(KeyCode.NUMPAD4)
-            );
+        );
 
-            Collections.addAll(focusNextList,
+        Collections.addAll(focusNextList,
                 new KeyCombination(KeyCode.PAGE_UP)
-            );
+        );
 
-            Collections.addAll(focusPreviousList,
+        Collections.addAll(focusPreviousList,
                 new KeyCombination(KeyCode.PAGE_DOWN)
-            );
+        );
 
-            saveProject.add(new KeyCombination(KeyCode.S, true, false, false, false));
-            lockWorkspace.add(new KeyCombination(KeyCode.L, true, false, false, false));
-            unlockWorkspace.add(new KeyCombination(KeyCode.L, true, false, true, false));
-        }
-        else
+        saveProject.add(new KeyCombination(KeyCode.S, true, false, false, false));
+        lockWorkspace.add(new KeyCombination(KeyCode.L, true, false, false, false));
+        unlockWorkspace.add(new KeyCombination(KeyCode.L, true, false, true, false));
+
+        if(node != null)
         {
-            goKeys.addAll(loadMap(node, "go"));
-            panicKeys.addAll(loadMap(node, "panic"));
-            fadeOutKeys.addAll(loadMap(node, "fadeOut"));
+            loadMap(node, goKeys, "go");
+            loadMap(node, togglePauseKeys, "pause");
+            loadMap(node, panicKeys, "panic");
+            loadMap(node, fadeOutKeys, "fadeOut");
 
-            focusNextCue.addAll(loadMap(node, "nextCue"));
-            focusPreviousCue.addAll(loadMap(node, "previousCue"));
-            focusNextList.addAll(loadMap(node, "nextList"));
-            focusPreviousList.addAll(loadMap(node, "previousList"));
+            loadMap(node, focusNextCue, "nextCue");
+            loadMap(node, focusPreviousCue, "previousCue");
+            loadMap(node, focusNextList, "nextList");
+            loadMap(node, focusPreviousList, "previousList");
 
-            saveProject.addAll(loadMap(node, "saveProject"));
-            lockWorkspace.addAll(loadMap(node, "lockWorkspace"));
-            unlockWorkspace.addAll(loadMap(node, "unlockWorkspace"));
+            loadMap(node, saveProject, "saveProject");
+            loadMap(node, lockWorkspace, "lockWorkspace");
+            loadMap(node, unlockWorkspace, "unlockWorkspace");
         }
     }
 
@@ -103,6 +103,7 @@ public class KeyMap
         writer.writeObjectFieldStart("keyMap");
         {
             saveMap(writer, goKeys, "go");
+            saveMap(writer, togglePauseKeys, "pause");
             saveMap(writer, panicKeys, "panic");
             saveMap(writer, fadeOutKeys, "fadeOut");
 
@@ -128,18 +129,15 @@ public class KeyMap
         writer.writeEndArray();
     }
 
-    private List<KeyCombination> loadMap(JsonNode collection, String name)
+    private void loadMap(JsonNode collection, List<KeyCombination> map, String name)
     {
-        LinkedList<KeyCombination> result = new LinkedList<>();
-
+        if(!collection.has(name)) return;
         System.out.println("Loading keymap for " + name);
 
         for(JsonNode n : collection.get(name))
         {
-            result.add(new KeyCombination(n.asText()));
+            map.add(new KeyCombination(n.asText()));
         }
-
-        return result;
     }
 
     public List<KeyCombination> getGoKeys()
@@ -190,5 +188,9 @@ public class KeyMap
     public List<KeyCombination> getUnlockWorkspace()
     {
         return unlockWorkspace;
+    }
+
+    public List<KeyCombination> getTogglePauseKeys() {
+        return togglePauseKeys;
     }
 }

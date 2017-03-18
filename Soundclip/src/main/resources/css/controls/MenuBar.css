@@ -32,6 +32,14 @@
     -fx-graphic: url('/img/ic_timeline_white_18dp_1x.png');
 }
 
+#pause {
+    -fx-graphic: url('/img/ic_pause_white_24dp_1x.png');
+}
+
+#pause.outline {
+    -fx-background-color: md-cyan-A700;
+}
+
 #panic {
     -fx-graphic: url('/img/ic_warning_white_24dp_1x.png');
 }

@@ -20,6 +20,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -72,6 +75,8 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public final Signal<CueList> onCueListAdded = new Signal<>();
     /** A signal triggered when a cue list is removed */
     public final Signal<CueList> onCueListRemoved = new Signal<>();
+
+    private final BooleanProperty pauseTransportProperty = new SimpleBooleanProperty(false);
 
     /**
      * Loads the project at the specified path on disk
@@ -145,6 +150,13 @@ public class Project implements Iterable<CueList>, AutoCloseable
             throw new IllegalArgumentException("The specified project is missing required fields", ex);
         }
 
+        pauseTransportProperty.addListener((prop, oldValue, newValue) -> {
+            cueLists.forEach((list) -> {
+                if(newValue) list.pauseRunningCues();
+                else list.unpauseCues();
+            });
+        });
+
         Log.info("Project loaded successfully");
     }
 
@@ -217,18 +229,24 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public void panic()
     {
         long now = System.currentTimeMillis();
-        boolean hard = now - lastPanicAt <= getPanicHardStopBefore();
+        boolean hard = (now - lastPanicAt <= getPanicHardStopBefore()) || isTransportPaused();
         onPanic.post(new Pair<>(Duration.millis(panicHardStopBefore), hard));
         panic(hard);
         lastPanicAt = now;
 
     }
 
-    /** Panic all cues. If {@param hard} is {@code true}, don't fade out gracefully */
+    /** Panic all cues. If {@param hard} is {@code true} (or the transport is paused), don't fade out gracefully */
     public void panic(boolean hard)
     {
-        Log.warn("PANIC! {}", hard ? "Hard-stopping all cues" : "Stopping all cues gracefully");
-        cueLists.forEach((list) -> list.panic(Duration.millis(panicHardStopBefore), hard));
+        boolean isHard = hard | isTransportPaused();
+        Log.warn("PANIC! {}", isHard ? "Hard-stopping all cues" : "Stopping all cues gracefully");
+        cueLists.forEach((list) -> list.panic(Duration.millis(panicHardStopBefore), isHard));
+
+        if(isHard && isTransportPaused())
+        {
+            Platform.runLater(() -> pauseTransport(false));
+        }
     }
 
     public ICue resolveCue(UUID id)
@@ -296,6 +314,27 @@ public class Project implements Iterable<CueList>, AutoCloseable
     public boolean isDirty()
     {
         return dirty;
+    }
+
+    public boolean toggleTransport()
+    {
+        boolean v = !isTransportPaused();
+        pauseTransport(v);
+
+        return v;
+    }
+
+    public boolean isTransportPaused() {
+        return pauseTransportProperty.get();
+    }
+
+    public BooleanProperty pauseTransportPropertyProperty() {
+        return pauseTransportProperty;
+    }
+
+    public void pauseTransport(boolean value) {
+        Log.info("Cue Transport is now {}", value ? "PAUSED" : "RESUMED");
+        this.pauseTransportProperty.set(value);
     }
 
     @Override

@@ -100,6 +100,38 @@ public class CueList implements Iterable<ICue>, AutoCloseable, IProjectPathConsu
     }
 
     /**
+     * Pause all running cues in this list. If a cue does not support
+     * {@link CueSupportFlags#RESUME}, the cue will be stopped.
+     */
+    public void pauseRunningCues()
+    {
+        cues.forEach((cue) -> {
+            if(!cue.isPerformingAction()) return;
+            if(CueSupportFlags.Supports(cue, CueSupportFlags.RESUME))
+            {
+                cue.pause();
+            }
+            else
+            {
+                cue.stop();
+            }
+        });
+    }
+
+    /**
+     * Resume all paused cues in the list
+     */
+    public void unpauseCues()
+    {
+        cues.forEach((cue) -> {
+            if(cue.isPaused())
+            {
+                cue.resume();
+            }
+        });
+    }
+
+    /**
      * Adds the cue to the cue list. If a cue with the same number exists in the list,
      * the newly added cue will be suffixed with ".5"
      *

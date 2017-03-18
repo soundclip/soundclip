@@ -13,6 +13,7 @@
     </left>
 
     <right>
+        <Button fx:id="pause" onAction="#doPause"/>
         <Button fx:id="panic" onAction="#doPanic"/>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="lockWorkspace" />

@@ -190,7 +190,7 @@ public class CueListView extends Tab
     }
 
     public void goNextCue() {
-        if(!Soundclip.Instance().isWorkspaceLocked()) return;
+        if(!Soundclip.Instance().isWorkspaceLocked() || Soundclip.Instance().getCurrentProject().isTransportPaused()) return;
 
         int i = getSelectedIndex();
         ICue c = getSelectedCue();
