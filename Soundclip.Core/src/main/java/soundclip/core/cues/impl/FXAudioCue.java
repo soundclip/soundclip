@@ -16,10 +16,7 @@ package soundclip.core.cues.impl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.media.Media;
@@ -280,7 +277,8 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         fadeTimeline = new Timeline(
                 new KeyFrame(
                         duration,
-                        new KeyValue(backend.volumeProperty(), 1.0)
+                        // TODO: Allow interpolator to be set
+                        new KeyValue(backend.volumeProperty(), 1.0, Interpolator.EASE_BOTH)
                 )
         );
 
@@ -300,7 +298,8 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         fadeTimeline = new Timeline(
                 new KeyFrame(
                         duration,
-                        new KeyValue(backend.volumeProperty(), value)
+                        // TODO: Allow interpolator to be set
+                        new KeyValue(backend.volumeProperty(), value, Interpolator.EASE_BOTH)
                 )
         );
 
@@ -319,7 +318,8 @@ public class FXAudioCue extends CueBase implements IAudioCue, AutoCloseable
         fadeTimeline = new Timeline(
                 new KeyFrame(
                         duration,
-                        new KeyValue(backend.volumeProperty(), 0.0)
+                        // TODO: Allow interpolator to be set
+                        new KeyValue(backend.volumeProperty(), 0.0, Interpolator.EASE_BOTH)
                 )
         );
         fadeTimeline.setOnFinished(e ->

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class TimePicker extends TextField
 {
     private ObjectProperty<Duration> time = new SimpleObjectProperty<>(Duration.ZERO);
-    private final Pattern timePattern = Pattern.compile("\\d\\d:\\d\\d\\.\\d\\d\\d");
+    private final Pattern timePattern = Pattern.compile("\\d\\d:\\d\\d\\.\\d\\d");
 
     private volatile boolean timeUpdateMutex = false;
 
